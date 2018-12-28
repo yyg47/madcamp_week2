@@ -1,7 +1,9 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,6 +39,8 @@ public class Tab1Fragment extends Fragment {
     private static final int PERMISSION_REQ_CODE = 1;
 
     private ArrayList<String> contacts;
+    private ArrayAdapter<String> adapter;
+    private ListView listView;
 
     /* TabPagerAdapter에서 Fragment 생성할 때 사용하는 메소드 */
     public static Tab1Fragment newInstance(int page) {
@@ -63,6 +68,32 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 tryLoadContacts();
+            }
+        });
+
+        ListView listView = (ListView)top.findViewById(R.id.list_view);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final long idx = id;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Title");
+                builder.setItems(new CharSequence[]{"삭제"},
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch(which) {
+                                    case 0:
+                                        Toast.makeText(context, "Delete " + idx, Toast.LENGTH_SHORT).show();
+                                        contacts.remove((int)idx);
+                                        Log.d("Deleted", contacts.toString());
+                                        updateListView();
+                                        break;
+                                }
+                            }
+                        });
+                builder.show();
+                return false;
             }
         });
 
@@ -127,11 +158,12 @@ public class Tab1Fragment extends Fragment {
     }
 
     private void updateListView() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
+        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1);
         if(contacts != null) {
             adapter.addAll(contacts);
         }
         ((ListView)top.findViewById(R.id.list_view)).setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void unpackJSON(String src) {
