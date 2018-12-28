@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -85,14 +86,15 @@ public class Tab2Fragment extends Fragment {
     }
 
     public void initializeFloatingActionButton() {
-        final FloatingActionButton fab, fab1, fab2;
+        final FloatingActionButton[] fab = new FloatingActionButton[4];
 
         final Animation fab_open = AnimationUtils.loadAnimation(context, R.anim.fab_open);
         final Animation fab_close = AnimationUtils.loadAnimation(context, R.anim.fab_close);
 
-        fab = (FloatingActionButton)top.findViewById(R.id.fab);
-        fab1 = (FloatingActionButton)top.findViewById(R.id.fab1);
-        fab2 = (FloatingActionButton)top.findViewById(R.id.fab2);
+        fab[0] = (FloatingActionButton)top.findViewById(R.id.fab);
+        fab[1] = (FloatingActionButton)top.findViewById(R.id.fab1);
+        fab[2] = (FloatingActionButton)top.findViewById(R.id.fab2);
+        fab[3] = (FloatingActionButton)top.findViewById(R.id.fab3);
 
         isFabOpen = false;
 
@@ -112,29 +114,33 @@ public class Tab2Fragment extends Fragment {
                         anim();
                         addImageFromCamera();
                         break;
+                    case R.id.fab3:
+                        anim();
+                        removeAllItems();
+                        break;
                 }
             }
 
             public void anim() {
                 if(isFabOpen) {
-                    fab1.startAnimation(fab_close);
-                    fab2.startAnimation(fab_close);
-                    fab1.setClickable(false);
-                    fab2.setClickable(false);
+                    for(int i = 1; i < 4; i++) {
+                        fab[i].startAnimation(fab_close);
+                        fab[i].setClickable(false);
+                    }
                     isFabOpen = false;
                 } else {
-                    fab1.startAnimation(fab_open);
-                    fab2.startAnimation(fab_open);
-                    fab1.setClickable(true);
-                    fab2.setClickable(true);
+                    for(int i = 1; i < 4; i++) {
+                        fab[i].startAnimation(fab_open);
+                        fab[i].setClickable(true);
+                    }
                     isFabOpen = true;
                 }
             }
         };
 
-        fab.setOnClickListener(onClickListener);
-        fab1.setOnClickListener(onClickListener);
-        fab2.setOnClickListener(onClickListener);
+        for(int i = 0; i < 4; i++) {
+            fab[i].setOnClickListener(onClickListener);
+        }
     }
 
     final static String listPath = "images.json";
@@ -294,6 +300,14 @@ public class Tab2Fragment extends Fragment {
         if(file.exists() && file.delete()) {
             Log.d("Delete File", uri.getPath());
         }
+        saveImageListToInternal();
+    }
+
+    private void removeAllItems() {
+        int l = adapter.dataset.size();
+        for(int i = l; --i >= 0;) {
+            removeItem(i);
+        }
     }
 
     @Override
@@ -314,6 +328,7 @@ public class Tab2Fragment extends Fragment {
 
             Uri newUri = copyToInternal(uri);
             adapter.add(newUri, filename);
+            saveImageListToInternal();
         }
     }
 
@@ -327,6 +342,21 @@ public class Tab2Fragment extends Fragment {
 
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
             FileOutputStream fos = context.openFileOutput(imageFileName, Context.MODE_PRIVATE);
+
+            /* scaling */
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            float scaleFactor = 1.f;
+            if(width < height) scaleFactor = 256.f / (float)width;
+            else scaleFactor = 256.f / (float)height;
+            if(scaleFactor < 1.f) {
+                Matrix matrix = new Matrix();
+                matrix.postScale(scaleFactor, scaleFactor);
+                Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+                bitmap.recycle();
+                bitmap = resized;
+            }
+
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
             Uri newUri = Uri.parse(context.getFileStreamPath(imageFileName).getAbsolutePath());
