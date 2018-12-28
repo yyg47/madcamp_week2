@@ -123,14 +123,18 @@ public class Tab2Fragment extends Fragment {
 
             public void anim() {
                 if(isFabOpen) {
-                    for(int i = 1; i < 4; i++) {
-                        fab[i].startAnimation(fab_close);
+                    for(int i = 1; i < fab.length; i++) {
+                        Animation a = AnimationUtils.loadAnimation(context, R.anim.fab_close);
+                        a.setStartOffset((fab.length - i - 1) * 50);
+                        fab[i].startAnimation(a);
                         fab[i].setClickable(false);
                     }
                     isFabOpen = false;
                 } else {
-                    for(int i = 1; i < 4; i++) {
-                        fab[i].startAnimation(fab_open);
+                    for(int i = 1; i < fab.length; i++) {
+                        Animation a = AnimationUtils.loadAnimation(context, R.anim.fab_open);
+                        a.setStartOffset((i - 1) * 50);
+                        fab[i].startAnimation(a);
                         fab[i].setClickable(true);
                     }
                     isFabOpen = true;
