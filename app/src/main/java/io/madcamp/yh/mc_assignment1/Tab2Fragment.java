@@ -1,6 +1,9 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 public class Tab2Fragment extends Fragment {
@@ -23,6 +27,12 @@ public class Tab2Fragment extends Fragment {
     private View top;
 
     private boolean isFabOpen;
+
+    private static final int REQ_IMG_FILE = 1;
+    private static final int REQ_TAKE_PHOTO = 2;
+
+    private RecyclerView recyclerView;
+    private Tab2Adapter adapter;
 
     /* TabPagerAdapter에서 Fragment 생성할 때 사용하는 메소드 */
     public static Tab2Fragment newInstance(int page) {
@@ -74,11 +84,11 @@ public class Tab2Fragment extends Fragment {
                         break;
                     case R.id.fab1:
                         anim();
-                        Toast.makeText(context, "Button1", Toast.LENGTH_SHORT).show();
+                        addImageFromFile();
                         break;
                     case R.id.fab2:
                         anim();
-                        Toast.makeText(context, "Button2", Toast.LENGTH_SHORT).show();
+                        addImageFromCamera();
                         break;
                 }
             }
@@ -106,11 +116,40 @@ public class Tab2Fragment extends Fragment {
     }
 
     public void initializeRecyclerView() {
-        RecyclerView recyclerView = (RecyclerView)top.findViewById(R.id.recycler_view);
-        Tab2Adapter adapter = new Tab2Adapter(new ArrayList<Pair<String, String>>());
+        recyclerView = (RecyclerView)top.findViewById(R.id.recycler_view);
+        adapter = new Tab2Adapter(new ArrayList<Pair<String, String>>());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
+        recyclerView.setLayoutManager(new GridLayoutManager(context, 4));
         recyclerView.setAdapter(adapter);
+    }
 
+    public void addImageFromFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQ_IMG_FILE);
+    }
+
+    public void addImageFromCamera() {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQ_IMG_FILE:
+                    Uri uri = data.getData();
+                    try {
+                        String path = URLDecoder.decode(uri.toString(), "UTF-8");
+                        String filename = path.substring(path.lastIndexOf("/") + 1);
+                        if(filename.length() < 1) filename = "NONAME";
+                        adapter.add(uri.toString(), filename);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQ_TAKE_PHOTO:
+                    break;
+            }
+        }
     }
 }
