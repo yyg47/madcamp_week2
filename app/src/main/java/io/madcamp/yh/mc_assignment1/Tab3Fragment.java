@@ -3,6 +3,7 @@ package io.madcamp.yh.mc_assignment1;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class Tab3Fragment extends Fragment {
         this.context = view.getContext();
 
         /* -- 여기서부터 작성해주세요 -- */
+        Log.d("Hello", "World!");
 
         return view;
     }
