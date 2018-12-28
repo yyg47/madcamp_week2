@@ -78,9 +78,11 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
         notifyDataSetChanged();
     }
 
-    public void remove(int i) {
+    public Uri remove(int i) {
+        Uri uri = dataset.get(i).first;
         dataset.remove(i);
         notifyDataSetChanged();
+        return uri;
     }
 
 

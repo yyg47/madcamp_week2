@@ -1,8 +1,10 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import org.json.*;
 
@@ -215,6 +218,35 @@ public class Tab2Fragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 4));
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(
+                context, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+                final int idx = position;
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Image " + idx);
+                builder.setItems(new CharSequence[]{"삭제"},
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch(which) {
+                                    case 0:
+                                        Toast.makeText(context, "Delete " + idx, Toast.LENGTH_SHORT).show();
+                                        removeItem(idx);
+
+                                        Log.d("Deleted", "" + idx);
+                                        break;
+                                }
+                            }
+                        });
+                builder.show();
+            }
+        }));
     }
 
     public void addImageFromFile() {
@@ -252,6 +284,15 @@ public class Tab2Fragment extends Fragment {
 
         } catch(Exception e) {
             return "noname";
+        }
+    }
+
+    private void removeItem(int idx) {
+        if(idx < 0 || idx >= adapter.dataset.size()) return;
+        Uri uri = adapter.remove(idx);
+        File file = new File(uri.getPath());
+        if(file.exists() && file.delete()) {
+            Log.d("Delete File", uri.getPath());
         }
     }
 
