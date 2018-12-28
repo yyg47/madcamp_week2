@@ -1,11 +1,20 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    final int PERMISSION_REQ_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,4 +34,5 @@ public class MainActivity extends AppCompatActivity {
         /* tabLayout 초기화 */
         tabLayout.setupWithViewPager(viewPager);
     }
+
 }

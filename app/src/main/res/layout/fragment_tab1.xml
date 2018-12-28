@@ -3,10 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_view"
+    <Button
+        android:id="@+id/button_sync"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="tab1" />
+        android:layout_height="wrap_content"
+        android:text="@string/button_sync_label"/>
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
