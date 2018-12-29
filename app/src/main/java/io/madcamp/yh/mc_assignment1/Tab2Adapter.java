@@ -31,39 +31,6 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
 
         public void setBitmap(Uri uri) {
             imageView.setImageURI(uri);
-            /* Bitmap bm = postprocessOfCamera(uri);
-            if(bm != null) {
-                imageView.setImageBitmap(bm);
-            } */
-        }
-
-        private Bitmap postprocessOfCamera(Uri uri) {
-            /* try {
-                Bitmap image = BitmapFactory.decodeStream(imageView.getContext().getContentResolver().openInputStream(uri));
-                ExifInterface ei = new ExifInterface(imageView.getContext().getContentResolver().openInputStream(uri));
-                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                        ExifInterface.ORIENTATION_UNDEFINED);
-                Bitmap rotatedBitmap = null;
-                float angle = 0.0f;
-                switch(orientation) {
-                    case ExifInterface.ORIENTATION_ROTATE_90: angle = 90.f; break;
-                    case ExifInterface.ORIENTATION_ROTATE_180: angle = 180.f; break;
-                    case ExifInterface.ORIENTATION_ROTATE_270: angle = 270.f; break;
-                }
-                Log.d("Angle", "" + angle);
-                Bitmap rotated = image;
-                if(angle != 0.0f) rotated = rotateImage(image, angle);
-                return rotated;
-            } catch(IOException e) {
-                e.printStackTrace();
-                return null;
-            } */ return null;
-        }
-
-        private static Bitmap rotateImage(Bitmap source, float angle) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(angle);
-            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
         }
     }
 

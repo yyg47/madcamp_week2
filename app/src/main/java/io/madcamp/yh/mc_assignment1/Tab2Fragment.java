@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -70,7 +71,7 @@ public class Tab2Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         top = inflater.inflate(R.layout.fragment_tab2, container, false);
-        this.context = top.getContext();
+        this.context = (Context)getActivity();
 
         /* -- 여기서부터 작성해주세요 -- */
         initializeFloatingActionButton();
@@ -107,15 +108,12 @@ public class Tab2Fragment extends Fragment {
                         anim();
                         break;
                     case R.id.fab1:
-                        anim();
                         addImageFromFile();
                         break;
                     case R.id.fab2:
-                        anim();
                         addImageFromCamera();
                         break;
                     case R.id.fab3:
-                        anim();
                         removeAllItems();
                         break;
                 }
@@ -331,7 +329,7 @@ public class Tab2Fragment extends Fragment {
             }
 
             Uri newUri = copyToInternal(uri);
-            adapter.add(newUri, filename);
+            adapter.add(newUri, new SimpleDateFormat("yyMMdd_HHmmss").format(new Date()));
             saveImageListToInternal();
         }
     }
@@ -345,7 +343,21 @@ public class Tab2Fragment extends Fragment {
             fout.mkdir();
 
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            FileOutputStream fos = context.openFileOutput(imageFileName, Context.MODE_PRIVATE);
+            Matrix matrix = new Matrix();
+
+            InputStream is = context.getContentResolver().openInputStream(uri);
+            if(is != null) {
+                ExifInterface ei = new ExifInterface(is);
+                int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+                float angle = 0.0f;
+                switch(orientation) {
+                    case ExifInterface.ORIENTATION_ROTATE_90: angle = 90.f; break;
+                    case ExifInterface.ORIENTATION_ROTATE_180: angle = 180.f; break;
+                    case ExifInterface.ORIENTATION_ROTATE_270: angle = 270.f; break;
+                }
+                matrix.postRotate(angle);
+            }
 
             /* scaling */
             int width = bitmap.getWidth();
@@ -353,14 +365,16 @@ public class Tab2Fragment extends Fragment {
             float scaleFactor = 1.f;
             if(width < height) scaleFactor = 256.f / (float)width;
             else scaleFactor = 256.f / (float)height;
+
             if(scaleFactor < 1.f) {
-                Matrix matrix = new Matrix();
                 matrix.postScale(scaleFactor, scaleFactor);
-                Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-                bitmap.recycle();
-                bitmap = resized;
             }
 
+            Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+            bitmap.recycle();
+            bitmap = resized;
+
+            FileOutputStream fos = context.openFileOutput(imageFileName, Context.MODE_PRIVATE);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
             Uri newUri = Uri.parse(context.getFileStreamPath(imageFileName).getAbsolutePath());
