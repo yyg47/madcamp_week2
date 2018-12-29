@@ -31,14 +31,15 @@ import java.util.List;
 public class Tab1Fragment extends Fragment {
     /* --- Constants --- */
     public static final String ARG_PAGE = "ARG_PAGE";
-    public static final int REQUEST_CODE = 524;
+    public static final int REQUEST_CODE_ADD = 524;
+    public static final int REQUEST_CODE_EDIT = 47;
 
 
     /* --- Member Variables --- */
     private int page;
     private Context context;
     private View top;
-    public String[] call_or_delete = {"통화","삭제"};
+    public String[] call_or_delete = {"통화","수정","삭제"};
 
     private ListViewAdapter adapter;
 
@@ -71,12 +72,24 @@ public class Tab1Fragment extends Fragment {
 
         contact_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(contacts.get(position).first);
                 builder.setItems(call_or_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (which == 2){
+                            contacts.remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        else if (which == 1){
+                            Intent intent = new Intent(context.getApplicationContext(), EditcontactActivity.class);
+                            intent.putExtra("contact_name",contacts.get(position).first);
+                            intent.putExtra("contact_number",contacts.get(position).second);
+                            intent.putExtra("contact_position",position);
+                            startActivityForResult(intent, REQUEST_CODE_EDIT);
+                        }
 
                     }
                 });
@@ -123,7 +136,7 @@ public class Tab1Fragment extends Fragment {
                         break;
                     case R.id.fab1: /* Add button */
                         Intent intent = new Intent(context.getApplicationContext(), AddcontactActivity.class);
-                        startActivityForResult(intent, REQUEST_CODE);
+                        startActivityForResult(intent, REQUEST_CODE_ADD);
                         break;
                     case R.id.fab2: /* Load from contacts button */
 
@@ -171,8 +184,8 @@ public class Tab1Fragment extends Fragment {
     public void onActivityResult(int requestCode,int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         switch(requestCode){
-            case(REQUEST_CODE):{
-                if(resultCode==AddcontactActivity.RESULT_OK){
+            case REQUEST_CODE_ADD:
+                if(resultCode == AddcontactActivity.RESULT_OK){
                     String contact_name = data.getStringExtra("contact_name");
                     String contact_num = data.getStringExtra("contact_num");
                     Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
@@ -180,10 +193,17 @@ public class Tab1Fragment extends Fragment {
                     contacts.add(pair);
                     adapter.notifyDataSetChanged();
                 }
-            }
-
-
-
+            break;
+            case REQUEST_CODE_EDIT:
+                if(resultCode == AddcontactActivity.RESULT_OK){
+                    String contact_name = data.getStringExtra("contact_name");
+                    String contact_num = data.getStringExtra("contact_num");
+                    Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
+                    Log.d("Test@", "Pair Created 1st=" + contact_name + ", 2nd=" + contact_num);
+                    contacts.set(data.getIntExtra("contact_position",0),pair);
+                    adapter.notifyDataSetChanged();
+                }
+                break;
         }
 
     }

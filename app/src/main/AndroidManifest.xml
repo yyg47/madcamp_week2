@@ -16,7 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".AddcontactActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +25,8 @@
         </activity>
 
         <provider
-            android:authorities="io.madcamp.yh.mc_assignment1.fileprovider"
             android:name="android.support.v4.content.FileProvider"
+            android:authorities="io.madcamp.yh.mc_assignment1.fileprovider"
             android:enabled="true"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -35,6 +34,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".EditcontactActivity"></activity>
     </application>
 
 </manifest>
