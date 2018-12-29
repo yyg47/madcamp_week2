@@ -17,6 +17,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".AddcontactActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:authorities="io.madcamp.yh.mc_assignment1.fileprovider"
             android:name="android.support.v4.content.FileProvider"
