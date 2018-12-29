@@ -63,7 +63,7 @@ public class OLD_Tab1Fragment extends Fragment {
         this.context = top.getContext();
 
         /* -- 여기서부터 작성해주세요 -- */
-        Button button = top.findViewById(R.id.button_sync);
+        Button button = null;//top.findViewById(R.id.button_sync);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +71,7 @@ public class OLD_Tab1Fragment extends Fragment {
             }
         });
 
-        ListView listView = (ListView)top.findViewById(R.id.list_view);
+        ListView listView = null; //(ListView)top.findViewById(R.id.list_view);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -162,7 +162,7 @@ public class OLD_Tab1Fragment extends Fragment {
         if(contacts != null) {
             adapter.addAll(contacts);
         }
-        ((ListView)top.findViewById(R.id.list_view)).setAdapter(adapter);
+        //((ListView)top.findViewById(R.id.list_view)).setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
