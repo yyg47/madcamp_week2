@@ -1,6 +1,8 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.json.*;
@@ -35,6 +38,7 @@ public class Tab1Fragment extends Fragment {
     private int page;
     private Context context;
     private View top;
+    public String[] call_or_delete = {"통화","삭제"};
 
     private ListViewAdapter adapter;
 
@@ -61,9 +65,27 @@ public class Tab1Fragment extends Fragment {
 
         initializeFloatingActionButton();
 
-        ListView contact_listview = (ListView)top.findViewById(R.id.contact_listview);
+        final ListView contact_listview = (ListView)top.findViewById(R.id.contact_listview);
         adapter = new ListViewAdapter(context,R.layout.item_text2, contacts);
         contact_listview.setAdapter(adapter);
+
+        contact_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(contacts.get(position).first);
+                builder.setItems(call_or_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+            }
+        });
 
         return top;
     }
@@ -165,6 +187,9 @@ public class Tab1Fragment extends Fragment {
         }
 
     }
+
+
+
 
 
 
