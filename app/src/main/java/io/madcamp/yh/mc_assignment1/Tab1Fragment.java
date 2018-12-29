@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import org.json.*;
@@ -26,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Tab1Fragment extends Fragment {
@@ -33,6 +36,7 @@ public class Tab1Fragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     public static final int REQUEST_CODE_ADD = 524;
     public static final int REQUEST_CODE_EDIT = 47;
+    public static final int REQUEST_CODE_JSON = 11;
 
 
     /* --- Member Variables --- */
@@ -41,6 +45,7 @@ public class Tab1Fragment extends Fragment {
     private View top;
     public String[] call_or_delete = {"통화","수정","삭제"};
 
+    private ArrayList<Pair<String, String>> contacts;
     private ListViewAdapter adapter;
 
     /* --- Header --- */
@@ -67,6 +72,10 @@ public class Tab1Fragment extends Fragment {
         initializeFloatingActionButton();
 
         final ListView contact_listview = (ListView)top.findViewById(R.id.contact_listview);
+
+        String fileContents = readInternalFile("contacts.json");
+        contacts = unpackFromJSON(fileContents);
+
         adapter = new ListViewAdapter(context,R.layout.item_text2, contacts);
         contact_listview.setAdapter(adapter);
 
@@ -90,13 +99,16 @@ public class Tab1Fragment extends Fragment {
                             intent.putExtra("contact_position",position);
                             startActivityForResult(intent, REQUEST_CODE_EDIT);
                         }
+                        else {
+                            Intent intent = new Intent("android.intent.action.DIAL",Uri.parse("tel:" + contacts.get(position).second));
+                            startActivity(intent);
+                        }
 
                     }
                 });
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
-
             }
         });
 
@@ -130,12 +142,13 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int id = v.getId();
+                Intent intent;
                 switch(id) {
                     case R.id.fab: /* Menu button */
                         anim();
                         break;
                     case R.id.fab1: /* Add button */
-                        Intent intent = new Intent(context.getApplicationContext(), AddcontactActivity.class);
+                        intent = new Intent(context.getApplicationContext(), AddcontactActivity.class);
                         startActivityForResult(intent, REQUEST_CODE_ADD);
                         break;
                     case R.id.fab2: /* Load from contacts button */
@@ -143,8 +156,9 @@ public class Tab1Fragment extends Fragment {
 
                         break;
                     case R.id.fab3: /* Load from/save as JSON button */
-
-
+                        intent = new Intent(context.getApplicationContext(), JsoncontactActivity.class);
+                        intent.putExtra("JSON", packIntoJSON(contacts));
+                        startActivityForResult(intent, REQUEST_CODE_JSON);
                         break;
                 }
             }
@@ -179,7 +193,11 @@ public class Tab1Fragment extends Fragment {
 
     /* --- ListView --- */
 
-    ArrayList<Pair<String, String>> contacts = new ArrayList<>();
+
+
+
+
+
     @Override
     public void onActivityResult(int requestCode,int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -191,7 +209,7 @@ public class Tab1Fragment extends Fragment {
                     Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
                     Log.d("Test@", "Pair Created 1st=" + contact_name + ", 2nd=" + contact_num);
                     contacts.add(pair);
-                    adapter.notifyDataSetChanged();
+                    updateContacts();
                 }
             break;
             case REQUEST_CODE_EDIT:
@@ -201,14 +219,32 @@ public class Tab1Fragment extends Fragment {
                     Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
                     Log.d("Test@", "Pair Created 1st=" + contact_name + ", 2nd=" + contact_num);
                     contacts.set(data.getIntExtra("contact_position",0),pair);
-                    adapter.notifyDataSetChanged();
+                    updateContacts();
+                }
+                break;
+            case REQUEST_CODE_JSON:
+                if(resultCode == AddcontactActivity.RESULT_OK) {
+                    String json = data.getStringExtra("JSON");
+                    ArrayList<Pair<String, String>> newList = unpackFromJSON(json);
+                    contacts.clear();
+                    contacts.addAll(newList);
+                    updateContacts();
                 }
                 break;
         }
-
     }
 
 
+    private void updateContacts() {
+        Collections.sort(contacts, (new Comparator<Pair<String, String>>() {
+            @Override
+            public int compare(Pair<String, String> o1, Pair<String, String> o2) {
+                return o1.first.compareTo(o2.first);
+            }
+        }));
+        writeInternalFile("contacts.json", packIntoJSON(contacts));
+        adapter.notifyDataSetChanged();
+    }
 
 
 
