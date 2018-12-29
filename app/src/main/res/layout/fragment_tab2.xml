@@ -61,7 +61,8 @@
         android:src="@drawable/ic_baseline_menu"
         android:tint="@android:color/white"
         android:visibility="visible"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:backgroundTint="@color/colorPrimary"
+        app:borderWidth="0dp"/>
 
         <!-- android:src="@drawable/ic_..." 아마 이미지인듯? -->
 
