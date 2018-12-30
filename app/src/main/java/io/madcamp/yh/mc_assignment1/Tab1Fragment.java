@@ -1,13 +1,19 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -35,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import android.database.Cursor;
 
 public class Tab1Fragment extends Fragment {
     /* --- Constants --- */
@@ -42,6 +49,7 @@ public class Tab1Fragment extends Fragment {
     public static final int REQUEST_CODE_ADD = 524;
     public static final int REQUEST_CODE_EDIT = 47;
     public static final int REQUEST_CODE_JSON = 11;
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 112;
 
 
     /* --- Member Variables --- */
@@ -160,6 +168,11 @@ public class Tab1Fragment extends Fragment {
         fab[2] = (FloatingActionButton)top.findViewById(R.id.fab2);
         fab[3] = (FloatingActionButton)top.findViewById(R.id.fab3);
 
+        if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        } else{
+            ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.READ_CONTACTS},1);
+        }
+
         /* Initialize isFabOpen as Closed */
         isFabOpen = false;
 
@@ -178,6 +191,49 @@ public class Tab1Fragment extends Fragment {
                         startActivityForResult(intent, REQUEST_CODE_ADD);
                         break;
                     case R.id.fab2: /* Load from contacts button */
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                        builder.setMessage("휴대폰에 저장된 모든 연락처를 목록에 추가합니다. 진행하시겠습니까?");
+                        builder.setTitle("경고!")
+                                .setCancelable(false)
+                                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String[] arrProjection = {
+                                                    ContactsContract.Contacts._ID,
+                                                    ContactsContract.Contacts.DISPLAY_NAME};
+                                            String[] arrPhoneProjection = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                                            Cursor clsCursor = context.getContentResolver().query(
+                                                    ContactsContract.Contacts.CONTENT_URI, arrProjection,
+                                                    ContactsContract.Contacts.HAS_PHONE_NUMBER + "=1", null, null);
+
+                                            while(clsCursor.moveToNext()) {
+                                                String strContactId = clsCursor.getString(0);
+
+                                                Cursor clsPhoneCursor = context.getContentResolver().query(
+                                                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, arrPhoneProjection,
+                                                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + strContactId, null, null);
+                                                while(clsPhoneCursor.moveToNext()){
+                                                    contacts.add(new Pair<String, String>(clsCursor.getString(1),clsPhoneCursor.getString(0)));
+                                                }
+                                                clsPhoneCursor.close();
+                                                updateContacts();
+                                            }
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+
 
 
                         break;
