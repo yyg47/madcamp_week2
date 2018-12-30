@@ -160,13 +160,14 @@ public class Tab1Fragment extends Fragment {
     // isFabOpen: contains whether FloatingActionButton is opened(true) or not(false)
     private boolean isFabOpen = false;
     public void initializeFloatingActionButton() {
-        final FloatingActionButton[] fab = new FloatingActionButton[4];
+        final FloatingActionButton[] fab = new FloatingActionButton[5];
 
         /* Find every floating action buttons */
         fab[0] = (FloatingActionButton)top.findViewById(R.id.fab);
         fab[1] = (FloatingActionButton)top.findViewById(R.id.fab1);
         fab[2] = (FloatingActionButton)top.findViewById(R.id.fab2);
         fab[3] = (FloatingActionButton)top.findViewById(R.id.fab3);
+        fab[4] = (FloatingActionButton)top.findViewById(R.id.fab4);
 
         if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
         } else{
@@ -233,15 +234,38 @@ public class Tab1Fragment extends Fragment {
                             AlertDialog alert = builder.create();
                             alert.show();
 
-
-
-
                         break;
+
                     case R.id.fab3: /* Load from/save as JSON button */
                         intent = new Intent(context.getApplicationContext(), JsoncontactActivity.class);
                         intent.putExtra("JSON", packIntoJSON(contacts));
                         startActivityForResult(intent, REQUEST_CODE_JSON);
                         break;
+
+                    case R.id.fab4:
+                        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+
+                        builder2.setMessage("휴대폰에 저장된 모든 연락처를 삭제합니다. 진행하시겠습니까?");
+                        builder2.setTitle("경고!")
+                                .setCancelable(false)
+                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        contacts.clear();
+                                        updateContacts();
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert2 = builder2.create();
+                        alert2.show();
+
                 }
             }
 
@@ -267,7 +291,7 @@ public class Tab1Fragment extends Fragment {
             }
         };
 
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 5; i++) {
             fab[i].setOnClickListener(onClickListener);
         }
     }
