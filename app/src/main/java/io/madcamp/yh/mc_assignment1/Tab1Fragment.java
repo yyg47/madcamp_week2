@@ -8,6 +8,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -46,6 +51,7 @@ public class Tab1Fragment extends Fragment {
     public String[] call_or_delete = {"통화","수정","삭제"};
 
     private ArrayList<Pair<String, String>> contacts;
+    private ArrayList<ListViewAdapter.Item> shownContacts;
     private ListViewAdapter adapter;
 
     /* --- Header --- */
@@ -75,13 +81,18 @@ public class Tab1Fragment extends Fragment {
 
         String fileContents = readInternalFile("contacts.json");
         contacts = unpackFromJSON(fileContents);
+        shownContacts = new ArrayList<>();
 
-        adapter = new ListViewAdapter(context,R.layout.item_text2, contacts);
+        adapter = new ListViewAdapter(context,R.layout.item_text2, shownContacts);
         contact_listview.setAdapter(adapter);
+
+        updateContacts();
 
         contact_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int shownPosition, long id) {
+                final int position = shownContacts.get(shownPosition).index;
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(contacts.get(position).first);
                 builder.setItems(call_or_delete, new DialogInterface.OnClickListener() {
@@ -89,17 +100,14 @@ public class Tab1Fragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 2){
                             contacts.remove(position);
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        else if (which == 1){
+                            updateContacts();
+                        } else if (which == 1){
                             Intent intent = new Intent(context.getApplicationContext(), EditcontactActivity.class);
                             intent.putExtra("contact_name",contacts.get(position).first);
                             intent.putExtra("contact_number",contacts.get(position).second);
                             intent.putExtra("contact_position",position);
                             startActivityForResult(intent, REQUEST_CODE_EDIT);
-                        }
-                        else {
+                        } else {
                             Intent intent = new Intent("android.intent.action.DIAL",Uri.parse("tel:" + contacts.get(position).second));
                             startActivity(intent);
                         }
@@ -109,6 +117,24 @@ public class Tab1Fragment extends Fragment {
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
+            }
+        });
+
+        EditText editText = (EditText)top.findViewById(R.id.searcheditText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateContacts();
             }
         });
 
@@ -236,17 +262,82 @@ public class Tab1Fragment extends Fragment {
 
 
     private void updateContacts() {
-        Collections.sort(contacts, (new Comparator<Pair<String, String>>() {
-            @Override
-            public int compare(Pair<String, String> o1, Pair<String, String> o2) {
-                return o1.first.compareTo(o2.first);
-            }
-        }));
         writeInternalFile("contacts.json", packIntoJSON(contacts));
+        refilterContacts(((EditText)top.findViewById(R.id.searcheditText)).getText().toString());
+        Collections.sort(shownContacts);
         adapter.notifyDataSetChanged();
     }
 
+    private void refilterContacts(String pattern) {
+        char[] p = pattern.toCharArray();
+        shownContacts.clear();
+        for(int i = 0; i < contacts.size(); i++) {
+            Pair<String, String> x = contacts.get(i);
+            SpannableStringBuilder f_name = fuzzyFind(x.first, p);
+            SpannableStringBuilder f_number = fuzzyFind(x.second, p);
+            if(f_name != null || f_number != null) {
+                if(f_name == null) f_name = new SpannableStringBuilder(x.first);
+                if(f_number == null) f_number = new SpannableStringBuilder(x.second);
+                shownContacts.add(new ListViewAdapter.Item(i, f_name, f_number));
+            }
+        }
+    }
 
+    private SpannableStringBuilder fuzzyFind(String s, char[] p) {
+        SpannableStringBuilder res = new SpannableStringBuilder(s);
+        int i;
+        int j = 0;
+        for(i = 0; i < s.length() && j < p.length; i++) {
+            if(fuzzyEqual(s.charAt(i), p[j])) {
+                res.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                        i, i + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                res.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)),
+                        i, i + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                j++;
+            }
+        }
+        if(j < p.length) return null;
+        return res;
+    }
+
+    private boolean fuzzyEqual(char a, char p) {
+        if(Character.toLowerCase(a) == Character.toLowerCase(p)) /* 영어 ㅕ */
+            return true;
+        else if(0xac00 <= a && a <= 0xd7a3) { /* 한글 */
+            int a_rel = a - 0xac00;
+            int jong = a_rel % 28;
+            int jung = a_rel / 28 % 21;
+            int cho = a_rel / 28 / 21;
+
+            if(0x1100 <= p && p <= 0x11f9) {
+                Log.d("fuzzyEqual@p", "" + (int)(p - 0x1100));
+                if (p <= 0x1112 && cho == p - 0x1100) return true;
+                else return (0x1161 <= p && p <= 0x1175 && jung == p - 0x1161);
+            } else if(0x3131 <= p && p <= 0x3163) {
+                Log.d("fuzzyEqual@p_ext", "" + (int)(p - 0x3131));
+                if(p <= 0x314e && cho == hangulExtToCho(p - 0x3131)) return true;
+                else return (0x314f <= p && jung == p - 0x314f);
+            }
+        }
+        return false;
+    }
+
+    private int hangulExtToCho(int v) {
+        int r = 0;
+        switch(v + 1) {
+            case 0x1e: case 0x1d: case 0x1c: case 0x1b: case 0x1a: case 0x19: case 0x18: case 0x17: case 0x16: case 0x15:
+            case 0x14: r++;
+            case 0x13: case 0x12: case 0x11:
+            case 0x10: r++; case 0x0f: r++; case 0x0e: r++;case 0x0d: r++;case 0x0c: r++;case 0x0b: r++;case 0x0a: r++;
+            case 0x09: case 0x08: case 0x07:
+            case 0x06: r++; case 0x05: r++;
+            case 0x04:
+            case 0x03: r++;
+        }
+        return v - r;
+    }
 
 
     /* --- Utility Methods --- */
@@ -257,7 +348,7 @@ public class Tab1Fragment extends Fragment {
             for(Pair<String, String> p : arrayList) {
                 JSONObject item = new JSONObject();
                 item.put("name", p.first);
-                item.put("number", p.second);
+                item.put("phoneNumber", p.second);
                 array.put(item);
             }
             return array.toString();
@@ -275,7 +366,7 @@ public class Tab1Fragment extends Fragment {
             JSONArray array = new JSONArray(src);
             for(int i = 0; i < array.length(); i++) {
                 JSONObject item = array.getJSONObject(i);
-                Pair<String, String> p = new Pair<>(item.getString("name"), item.getString("number"));
+                Pair<String, String> p = new Pair<>(item.getString("name"), item.getString("phoneNumber"));
                 arrayList.add(p);
             }
         } catch(JSONException e) {
