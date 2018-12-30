@@ -2,6 +2,8 @@ package io.madcamp.yh.mc_assignment1;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +11,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Parcelable;
 import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.*;
@@ -231,6 +237,25 @@ public class Tab2Fragment extends Fragment {
                 context, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                final Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Black_NoTitleBar);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+                dialog.setContentView(R.layout.dialog_image);
+
+                String oriPath = adapter.getOriginalPath(position);
+                ((ImageView)dialog.findViewById(R.id.image_view)).setImageURI(Uri.parse(oriPath));
+                Log.d("Test@oriPath", oriPath);
+
+                dialog.findViewById(R.id.blank).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.getWindow().getAttributes().windowAnimations = R.style.ImageDialogAnimation;
+
+                dialog.setCancelable(true);
+                dialog.show();
             }
 
             @Override
@@ -259,6 +284,7 @@ public class Tab2Fragment extends Fragment {
 
     public void addImageFromFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
         startActivityForResult(intent, REQ_IMG_FILE);
     }
@@ -306,33 +332,57 @@ public class Tab2Fragment extends Fragment {
     }
 
     private void removeAllItems() {
-        int l = adapter.dataset.size();
-        for(int i = l; --i >= 0;) {
-            removeItem(i);
-        }
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle("모든 이미지 삭제");
+        alert.setMessage("정말로 모든 이미지를 삭제하시겠습니까?");
+        alert.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int l = adapter.dataset.size();
+                for(int i = l; --i >= 0;) {
+                    removeItem(i);
+                }
+                dialog.dismiss();
+            }
+        });
+        alert.create().show();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK && (requestCode == REQ_IMG_FILE || requestCode == REQ_TAKE_PHOTO)) {
-            Uri uri = null;
-            String filename = null;
             switch(requestCode) {
                 case REQ_IMG_FILE:
-                    uri = data.getData();
-                    filename = decodeFilename(uri);
+                    if(data.getData() != null) {
+                        addImage(data.getData());
+                    } else if(android.os.Build.VERSION.SDK_INT > 16) {
+                        if (data.getClipData() != null) {
+                            ClipData clipData = data.getClipData();
+                            for (int i = 0; i < clipData.getItemCount(); i++) {
+                                addImage(clipData.getItemAt(i).getUri());
+                            }
+                        }
+                    }
                     break;
                 case REQ_TAKE_PHOTO:
-                    uri = tempPhotoUri;
-                    filename = decodeFilename(tempPhotoUri);
+                    addImage(tempPhotoUri);
                     break;
             }
-
-            Uri newUri = copyToInternal(uri);
-            adapter.add(newUri, new SimpleDateFormat("yyMMdd_HHmmss").format(new Date()));
-            saveImageListToInternal();
         }
     }
+
+    private void addImage(Uri uri) {
+        Uri newUri = copyToInternal(uri);
+        adapter.add(newUri, new SimpleDateFormat("yyMMdd_HHmmss").format(new Date()));
+        saveImageListToInternal();
+    }
+
 
     private Uri copyToInternal(Uri uri) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -343,6 +393,8 @@ public class Tab2Fragment extends Fragment {
             fout.mkdir();
 
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
             Matrix matrix = new Matrix();
 
             InputStream is = context.getContentResolver().openInputStream(uri);
@@ -359,9 +411,13 @@ public class Tab2Fragment extends Fragment {
                 matrix.postRotate(angle);
             }
 
+            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+            FileOutputStream fosRotated = context.openFileOutput("O_" + imageFileName, Context.MODE_PRIVATE);
+            rotated.compress(Bitmap.CompressFormat.JPEG, 100, fosRotated);
+            fosRotated.close();
+
             /* scaling */
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
+
             float scaleFactor = 1.f;
             if(width < height) scaleFactor = 256.f / (float)width;
             else scaleFactor = 256.f / (float)height;
@@ -372,13 +428,11 @@ public class Tab2Fragment extends Fragment {
 
             Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
             bitmap.recycle();
-            bitmap = resized;
 
             FileOutputStream fos = context.openFileOutput(imageFileName, Context.MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            resized.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
             Uri newUri = Uri.parse(context.getFileStreamPath(imageFileName).getAbsolutePath());
-            Log.d("newUri", newUri.getPath());
             return newUri;
         } catch(IOException e) {
             e.printStackTrace();

@@ -73,4 +73,13 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
     public int getItemCount() {
         return dataset.size();
     }
+
+    public String getOriginalPath(int position) {
+        Uri uri = dataset.get(position).first;
+        String thPath = uri.getPath();
+        int i = thPath.lastIndexOf("/");
+        String dir = thPath.substring(0, i);
+        String filename = thPath.substring(i + 1);
+        return dir + "/O_" + filename;
+    }
 }
