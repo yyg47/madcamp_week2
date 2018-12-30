@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.madcamp.yh.mc_assignment1">
+
     <uses-permission android:name="android.permission.DIAL_PHONE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -11,8 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +39,9 @@
         </provider>
 
         <activity android:name=".EditcontactActivity" />
-        <activity android:name=".JsoncontactActivity"></activity>
+        <activity android:name=".JsoncontactActivity" />
+        <activity android:name=".GameActivity" />
+        <activity android:name=".ScoreActivity"></activity>
     </application>
 
 </manifest>

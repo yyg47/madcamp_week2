@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/text_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="tab3" />
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:textSize="40sp"
+        android:textAlignment="center"
+        android:text="암산게임!" />
+
+    <Button
+        android:id="@+id/button_start_0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="초등학교 저학년"/>
+
+    <Button
+        android:id="@+id/button_start_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="고등학교"/>
+
+    <Button
+        android:id="@+id/button_start_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="대학"/>
 
 </LinearLayout>
