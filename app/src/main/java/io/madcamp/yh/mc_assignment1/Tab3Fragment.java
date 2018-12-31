@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Button;
+
+import java.util.ArrayList;
 
 public class Tab3Fragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
@@ -18,6 +21,11 @@ public class Tab3Fragment extends Fragment {
     public static final int Difficulty_Easy = 0;
     public static final int Difficulty_Normal = 1;
     public static final int Difficulty_Hard = 2;
+
+    private static final String[] BUTTON_LABELS = {
+            "덧셈/뺄셈", "복합", "적분"
+    };
+    private Button[] buttons;
 
     /* TabPagerAdapter에서 Fragment 생성할 때 사용하는 메소드 */
     public static Tab3Fragment newInstance(int page) {
@@ -45,7 +53,6 @@ public class Tab3Fragment extends Fragment {
         EditText setname_edittext = (EditText) getView().findViewById(R.id.setname_edittext);
         Intent intent_username = new Intent(getActivity(),GameActivity.class);
         intent_username.putExtra("UserName",setname_edittext.getText().toString());
-
 
         /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
         top.findViewById(R.id.button_start_0).setOnClickListener(new View.OnClickListener() {
@@ -76,5 +83,10 @@ public class Tab3Fragment extends Fragment {
         });
 
         return top;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }

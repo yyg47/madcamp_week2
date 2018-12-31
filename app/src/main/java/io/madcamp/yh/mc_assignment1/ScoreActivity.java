@@ -1,9 +1,11 @@
 package io.madcamp.yh.mc_assignment1;
 
+
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,7 +17,7 @@ public class ScoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
-
+      
         /* 우선 intent_username 택배로 보내둔 정보를 받을게요 */
 
         String UserName =;
@@ -54,6 +56,5 @@ public class ScoreActivity extends AppCompatActivity {
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
-
     }
 }

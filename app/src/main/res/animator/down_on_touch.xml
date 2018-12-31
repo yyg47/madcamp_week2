@@ -5,17 +5,17 @@
         android:state_pressed="true">
         <set>
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="translationZ"
                 android:valueTo="-2dp"
                 android:valueType="floatType" />
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="scaleX"
                 android:valueTo="0.99"
                 android:valueType="floatType" />
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="scaleY"
                 android:valueTo="0.99"
                 android:valueType="floatType" />
@@ -24,17 +24,17 @@
     <item>
         <set>
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="translationZ"
                 android:valueTo="0dp"
                 android:valueType="floatType" />
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="scaleX"
                 android:valueTo="1.0"
                 android:valueType="floatType" />
             <objectAnimator
-                android:duration="50"
+                android:duration="30"
                 android:propertyName="scaleY"
                 android:valueTo="1.0"
                 android:valueType="floatType" />
