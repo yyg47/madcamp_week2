@@ -42,7 +42,6 @@ public class GameActivity extends AppCompatActivity {
     /* 문제 */
     private ProblemSet problemSet;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +57,6 @@ public class GameActivity extends AppCompatActivity {
             case 2: problemSet = new IntProblemSet(); break;
         }
 
-
         /* 점수 초기화 */
         scoreTextView = findViewById(R.id.text_view_score);
         updateScore(0);
@@ -69,6 +67,10 @@ public class GameActivity extends AppCompatActivity {
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     /* 답안 카드에 대한 것들을 초기화합니다. */
     private void initializeAnsCards() {
@@ -126,11 +128,11 @@ public class GameActivity extends AppCompatActivity {
     private void setAnswer(int n) {
         /* n의 범위는 0-3 */
         if(n < 0 || n >= 4) return;
+        currentAnswer = n;
         for(View v : ansCards) {
             v.setOnClickListener(wrongOnClick);
         }
-        ansCards[n].setOnClickListener(correctOnClick);
-        currentAnswer = n;
+        ansCards[currentAnswer].setOnClickListener(correctOnClick);
     }
 
     private void showAnswer() {
@@ -159,5 +161,13 @@ public class GameActivity extends AppCompatActivity {
     private void updateScore(int newScore) {
         score = newScore;
         scoreTextView.setText("" + score);
+        if(score >= 30) finishGame();
+    }
+
+    private void finishGame() {
+        Intent intent = new Intent(this, ScoreActivity.class);
+        intent.putExtra("level", level);
+        intent.putExtra("score", score);
+        startActivity(intent);
     }
 }
