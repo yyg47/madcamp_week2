@@ -64,7 +64,20 @@ public class ScoreActivity extends AppCompatActivity {
             }
         });
 
-
+        /* Load score information */
+        int level = 0;
+        int score = 0;
+        GameScoreManager manager = new GameScoreManager(this);
+        ((TextView)findViewById(R.id.text_view_score_board))
+                .setText(manager.toString(level));
+        int ranking = manager.guessRanking(level, score);
+        if(0 <= ranking && ranking < 10) {
+            ((TextView)findViewById(R.id.text_view_ranking))
+                    .setText("#" + ranking);
+        } else {
+            ((TextView)findViewById(R.id.text_view_ranking))
+                    .setText("");
+        }
     }
 
 }

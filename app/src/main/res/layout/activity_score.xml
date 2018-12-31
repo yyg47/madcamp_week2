@@ -6,20 +6,55 @@
     android:orientation="vertical"
     tools:context=".ScoreActivity">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="당신의 점수는"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/text_view_score"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/text_view_ranking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="bottom|start"
+            android:text="#1"
+            android:textAlignment="textStart"
+            android:textColor="#bfbfbf"
+            android:textSize="36dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="당신의 점수는"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/text_view_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textAlignment="center"
+                android:textSize="52sp" />
+        </LinearLayout>
+    </FrameLayout>
 
     <Button
         android:id="@+id/button_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:text="처음으로" />
+
+    <TextView
+        android:id="@+id/text_view_score_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

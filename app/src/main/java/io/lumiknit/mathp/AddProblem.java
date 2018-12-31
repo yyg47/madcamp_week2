@@ -15,7 +15,7 @@ public class AddProblem extends Problem {
         Expr rt = new Number(r);
         if(r < 0) rt = new Paren(Paren.TYPE_ROUND, rt);
         Expr lhs = new Add(new Number(l), rt);
-        Texable p = new Equal(lhs, new Question());
+        Statement p = new Equal(lhs, new Question());
 
         long[] d = new long[3];
         for(int i = 0; i < d.length; i++) {
@@ -30,7 +30,7 @@ public class AddProblem extends Problem {
             }
         }
 
-        long x = Range.pickFrom(0, (long)Math.floor(Math.min(Math.log10(l), Math.log10(r))) + 1);
+        long x = Range.pickFrom(0, (long)Math.floor(Math.min(Math.log10(l), Math.log10(r))));
         long xx = 1;
         for(int i = 0; i < x; i++) xx *= 10;
         for(int i = 0; i < d.length; i++) d[i] = d[i] * xx + l + r;

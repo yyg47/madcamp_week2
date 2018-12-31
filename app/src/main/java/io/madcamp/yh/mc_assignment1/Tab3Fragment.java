@@ -18,12 +18,10 @@ public class Tab3Fragment extends Fragment {
     private int mPage;
     private Context context;
     private View top;
-    public static final int Difficulty_Easy = 0;
-    public static final int Difficulty_Normal = 1;
-    public static final int Difficulty_Hard = 2;
+    private EditText setname_edittext;
 
     private static final String[] BUTTON_LABELS = {
-            "덧셈/뺄셈", "복합", "적분"
+            "쉬움", "보통", "어려움", "매우 어려움?"
     };
     private Button[] buttons;
 
@@ -45,46 +43,22 @@ public class Tab3Fragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         top = inflater.inflate(R.layout.fragment_tab3, container, false);
         this.context = top.getContext();
 
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        final EditText setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
+        setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
+
+        buttons = new Button[BUTTON_LABELS.length];
+        buttons[0] = (Button)top.findViewById(R.id.button_start_0);
+        buttons[1] = (Button)top.findViewById(R.id.button_start_1);
+        buttons[2] = (Button)top.findViewById(R.id.button_start_2);
+        buttons[3] = (Button)top.findViewById(R.id.button_start_3);
 
         /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
-        top.findViewById(R.id.button_start_0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_Difficulty", Difficulty_Easy);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("UserName",setname_edittext.getText().toString());
-                startActivity(intent);
-            }
-        });
-
-        top.findViewById(R.id.button_start_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_Difficulty", Difficulty_Normal);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("UserName",setname_edittext.getText().toString());
-                startActivity(intent);
-            }
-        });
-
-        top.findViewById(R.id.button_start_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_Difficulty", Difficulty_Hard);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("UserName",setname_edittext.getText().toString());
-                startActivity(intent);
-            }
-        });
+        for(int i = 0; i < buttons.length; i++) {
+            buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
+        }
 
         return top;
     }
@@ -92,5 +66,26 @@ public class Tab3Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        GameScoreManager manager = new GameScoreManager(getActivity());
+        for(int i = 0; i < buttons.length; i++) {
+            buttons[i].setText(BUTTON_LABELS[i] + " (최고기록: " + manager.getScore(i, 0) + ")");
+        }
+    }
+
+    public class StartButtonOnClickListener implements View.OnClickListener {
+        int difficulty;
+
+        public StartButtonOnClickListener(int difficulty) {
+            this.difficulty = difficulty;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), GameActivity.class);
+            intent.putExtra("Game_Difficulty", difficulty);
+            intent.putExtra("UserName",setname_edittext.getText().toString());
+            startActivity(intent);
+        }
     }
 }

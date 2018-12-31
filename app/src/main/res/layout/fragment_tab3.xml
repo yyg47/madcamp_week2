@@ -17,32 +17,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="이름 입력 후 난이도를 고르세요" />
-
-    <EditText
-        android:id="@+id/setname_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="이름"
-        android:inputType="textPersonName" />
+        android:text="난이도를 고르세요" />
 
     <Button
         android:id="@+id/button_start_0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="덧셈뺄셈"/>
+        android:text="a"/>
 
     <Button
         android:id="@+id/button_start_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="복합계산"/>
+        android:text="b"/>
 
     <Button
         android:id="@+id/button_start_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="적분"/>
+        android:text="c"/>
+
+    <Button
+        android:id="@+id/button_start_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="d"/>
 
 </LinearLayout>
