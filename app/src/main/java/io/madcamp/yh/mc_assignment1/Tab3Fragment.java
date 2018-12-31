@@ -1,10 +1,15 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,11 +92,25 @@ public class Tab3Fragment extends Fragment {
             m.lastName = setname_edittext.getText().toString();
             m.save();
 
-            Intent intent = new Intent(getActivity(), GameActivity.class);
-            intent.putExtra("Game_Difficulty", difficulty);
-            intent.putExtra("UserName", m.lastName);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            startActivity(intent);
+            if(setname_edittext.getText().toString().length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("이름 입력후 진행해 주세요.");
+                builder.setCancelable(false)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                Intent intent = new Intent(getActivity(), GameActivity.class);
+                intent.putExtra("Game_Difficulty", difficulty);
+                intent.putExtra("UserName", m.lastName);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+            }
         }
     }
 }

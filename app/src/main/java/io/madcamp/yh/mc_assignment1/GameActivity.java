@@ -25,6 +25,9 @@ import io.lumiknit.mathe.Text;
 import io.lumiknit.mathp.*;
 
 public class GameActivity extends AppCompatActivity {
+    private static final int TIME_LIMIT = 60000;
+    private static final int SCORE_CORRECT = 10;
+    private static final int SCORE_WRONG = -5;
     private static final int NEXT_PROBLEM_DELAY = 1000;
 
     /* 게임 난이도 */
@@ -65,10 +68,10 @@ public class GameActivity extends AppCompatActivity {
 
         level = intent.getIntExtra("Game_Difficulty", -1);
         switch(level) {
-            case 0: problemSet = new AddSubProblemSet(0); break;
-            case 1: problemSet = new ArithmeticProblemSet(0); break;
-            case 2: problemSet = new EqProblemSet(1); break;
-            case 3: problemSet = new IntProblemSet(); break;
+            case 0: problemSet = new ArithmeticProblemSet(0); break;
+            case 1: problemSet = new ArithmeticProblemSet(1); break;
+            case 2: problemSet = new ComplexArithmeticProblemSet(0); break;
+            case 3: problemSet = new ComplexArithmeticEqSet(0); break;
             default: problemSet = new AddSubProblemSet(0); break;
         }
 
@@ -80,7 +83,7 @@ public class GameActivity extends AppCompatActivity {
         nextProblem();
 
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
-        timer = new CountDownTimer(6000,1000) {
+        timer = new CountDownTimer(TIME_LIMIT,1000) {
             public void onTick(long millisUntilFinished){
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
                 textview_timeleft.setText(millisUntilFinished/1000 + "초 남았습니다!!");
@@ -168,7 +171,7 @@ public class GameActivity extends AppCompatActivity {
                 if(currentAnswer >= 0) {
                     resultToast.setText("정답");
                     resultToast.show();
-                    updateScore(score + 10);
+                    updateScore(score + SCORE_CORRECT);
                     int i;
                     for (i = 3; i > 0 && ansCards[i] != v; i--) ;
                     showAnswer(i);
@@ -183,7 +186,7 @@ public class GameActivity extends AppCompatActivity {
                 if(currentAnswer >= 0) {
                     resultToast.setText("오답");
                     resultToast.show();
-                    updateScore(score - 5);
+                    updateScore(score + SCORE_WRONG);
                     int i;
                     for (i = 3; i > 0 && ansCards[i] != v; i--) ;
                     showAnswer(i);
