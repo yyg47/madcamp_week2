@@ -1,6 +1,7 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -32,7 +33,7 @@ public class GameActivity extends AppCompatActivity {
         /* Intent에서 게임 난이도 불러오기 */
         Intent intent = getIntent();
 
-        level = intent.getIntExtra("level", -1);
+        level = intent.getIntExtra("Game_Difficulty", -1);
 
         /* 점수 초기화 */
         score = 0;
@@ -40,6 +41,19 @@ public class GameActivity extends AppCompatActivity {
         initializeAnsCards();
 
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
+        /* 남은 시간이랑 끝나는걸 띄우고 싶은데 Layout을 건들지 말라하셔서 일단 밑에 처럼 내비둘게요~~ */
+        new CountDownTimer(30000,1000) {
+            public void onTick(long millisUntilFinished){
+                zzzzz.setText(millisUntilFinished/1000 + "초 남았습니다!!");
+            }
+            public void onFinish(){
+                zzzzzz.setText("끝!!");
+            }
+        }.start();
+
+        /* intent 택배에 점수 저장하기!*/
+        Intent intent_score = new Intent(this, GameActivity.class);
+        intent_score.putExtra("Game_Score",  score);
     }
 
 
