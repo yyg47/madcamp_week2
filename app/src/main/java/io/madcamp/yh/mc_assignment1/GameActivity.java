@@ -1,6 +1,10 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -118,21 +122,31 @@ public class GameActivity extends AppCompatActivity {
         correctOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resultToast.setText("정답");
-                resultToast.show();
-                updateScore(score + 10);
-                showAnswer();
-                nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
+                if(currentAnswer >= 0) {
+                    resultToast.setText("정답");
+                    resultToast.show();
+                    updateScore(score + 10);
+                    int i;
+                    for (i = 3; i > 0 && ansCards[i] != v; i--) ;
+                    showAnswer(i);
+                    currentAnswer = -1;
+                    nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
+                }
             }
         };
         wrongOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resultToast.setText("오답");
-                resultToast.show();
-                updateScore(score - 5);
-                showAnswer();
-                nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
+                if(currentAnswer >= 0) {
+                    resultToast.setText("오답");
+                    resultToast.show();
+                    updateScore(score - 5);
+                    int i;
+                    for (i = 3; i > 0 && ansCards[i] != v; i--) ;
+                    showAnswer(i);
+                    currentAnswer = -1;
+                    nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
+                }
             }
         };
 
@@ -151,8 +165,19 @@ public class GameActivity extends AppCompatActivity {
         ansCards[currentAnswer].setOnClickListener(correctOnClick);
     }
 
-    private void showAnswer() {
-        ansCards[currentAnswer].setCardBackgroundColor(getResources().getColor(R.color.colorButtonCorrect));
+    private void showAnswer(int n) {
+        int to = n == currentAnswer ?
+                getResources().getColor(R.color.colorButtonCorrect):
+                getResources().getColor(R.color.colorButtonWrong);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            ColorDrawable[] color = {
+                    new ColorDrawable(getResources().getColor(R.color.colorButton)), new ColorDrawable(to)};
+            TransitionDrawable trans = new TransitionDrawable(color);
+            ansCards[n].setBackground(trans);
+            trans.startTransition(150);
+        } else {
+            ansCards[n].setCardBackgroundColor(to);
+        }
     }
 
     private void nextProblem() {
@@ -170,6 +195,10 @@ public class GameActivity extends AppCompatActivity {
         for(int i = 0; i < 4; i++) {
             ansMathViews[i].setText("\\[" + set.answers[a[i]].toTex() + "\\]");
             ansCards[i].setCardBackgroundColor(getResources().getColor(R.color.colorButton));
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                ansCards[i].setBackground(new ColorDrawable(getResources().getColor(R.color.colorButton)));
+
+            }
         }
         setAnswer(ans);
     }
