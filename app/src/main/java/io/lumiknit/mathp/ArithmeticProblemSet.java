@@ -9,7 +9,7 @@ public class ArithmeticProblemSet extends ProblemSet {
         switch(level) {
             case 0: {
                 Range[] ranges1 = new Range[]{new Range(-99, 99)};
-                Range[] ranges2 = new Range[]{new Range(4, 19)};
+                Range[] ranges2 = new Range[]{new Range(2, 9)};
                 problems = new Problem[]{
                         new AddProblem(ranges1),
                         new SubProblem(ranges1),
@@ -18,7 +18,7 @@ public class ArithmeticProblemSet extends ProblemSet {
                 };
             } break;
             case 1: {
-                Range[] ranges1 = new Range[]{new Range(-999, 999)};
+                Range[] ranges1 = new Range[]{new Range(-9999, 9999)};
                 Range[] ranges2 = new Range[]{new Range(5, 99)};
                 problems = new Problem[]{
                         new AddProblem2(ranges1),

@@ -14,6 +14,22 @@ public class ComplexArithmeticProblemSet extends ProblemSet {
         switch(level) {
             case 0: {
                 Range[] ranges1 = new Range[]{new Range(-99999, 99999)};
+                Range[] ranges2 = new Range[]{new Range(2, 199)};
+                Range[] ranges3 = new Range[]{new Range(1, 40), new Range(3, 12)};
+                Range[] ranges4 = new Range[]{new Range(2, 10), new Range(2, 7)};
+                Range[] ranges5 = new Range[]{new Range(10, 150)};
+                problems = new Problem[]{
+                        new AddProblem2(ranges1),
+                        new SubProblem2(ranges1),
+                        new MultProblem(ranges2),
+                        new DivProblem(ranges2),
+                        new FracAddProblem(ranges3),
+                        new ExpProblem(ranges4),
+                        new SqrtProblem(ranges5),
+                };
+            } break;
+            case 2: {
+                Range[] ranges1 = new Range[]{new Range(-99999, 99999)};
                 Range[] ranges2 = new Range[]{new Range(2, 99)};
                 Range[] ranges3 = new Range[]{new Range(1, 99), new Range(3, 20)};
                 Range[] ranges4 = new Range[]{new Range(2, 15), new Range(2, 8)};
