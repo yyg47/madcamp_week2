@@ -54,33 +54,15 @@ public class Tab3Fragment extends Fragment {
         Intent intent_username = new Intent(getActivity(),GameActivity.class);
         intent_username.putExtra("UserName",setname_edittext.getText().toString());
 
+        buttons = new Button[3];
+        buttons[0] = (Button)top.findViewById(R.id.button_start_0);
+        buttons[1] = (Button)top.findViewById(R.id.button_start_1);
+        buttons[2] = (Button)top.findViewById(R.id.button_start_2);
+
         /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
-        top.findViewById(R.id.button_start_0).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Easy);
-                startActivity(intent);
-            }
-        });
-
-        top.findViewById(R.id.button_start_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Normal);
-                startActivity(intent);
-            }
-        });
-
-        top.findViewById(R.id.button_start_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Hard);
-                startActivity(intent);
-            }
-        });
+        for(int i = 0; i < buttons.length; i++) {
+            buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
+        }
 
         return top;
     }
@@ -88,5 +70,25 @@ public class Tab3Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        
+        GameScoreManager manager = new GameScoreManager(getActivity());
+        for(int i = 0; i < buttons.length; i++) {
+            buttons[i].setText(BUTTON_LABELS[i] + " (최고기록: " + manager.getScore(i, 0) + ")");
+        }
+    }
+
+    public class StartButtonOnClickListener implements View.OnClickListener {
+        int difficulty;
+
+        public StartButtonOnClickListener(int difficulty) {
+            this.difficulty = difficulty;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), GameActivity.class);
+            intent.putExtra("Game_Difficulty", difficulty);
+            startActivity(intent);
+        }
     }
 }
