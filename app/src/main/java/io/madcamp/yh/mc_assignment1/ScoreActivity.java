@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class ScoreActivity extends AppCompatActivity {
 
@@ -58,5 +59,11 @@ public class ScoreActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+
+        /* Load score information */
+        int level = 0;
+        GameScoreManager manager = new GameScoreManager(this);
+        ((TextView)findViewById(R.id.text_view_score_board))
+                .setText(manager.toString(level));
     }
 }

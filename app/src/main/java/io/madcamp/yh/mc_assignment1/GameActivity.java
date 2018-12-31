@@ -54,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
         level = intent.getIntExtra("Game_Difficulty", -1);
         switch(level) {
             case 0: problemSet = new AddSubProblemSet(0); break;
-            case 1: problemSet = new ComplexArithmeticProblemSet(0); break;
+            case 1: problemSet = new ArithmeticProblemSet(0); break;
             case 2: problemSet = new EqProblemSet(1); break;
             case 3: problemSet = new IntProblemSet(); break;
             default: problemSet = new AddSubProblemSet(0); break;

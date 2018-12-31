@@ -21,10 +21,11 @@ public class SubProblem2 extends Problem {
 
         long m = (long) Math.floor(Math.min(Math.log10(l), Math.log10(r)));
         long mx = m > 3 ? 2 : 0;
+        long km = Math.max(1, 1 + m / 2);
 
         for (int i = 0; i < d.length; i++) {
             long z = 0;
-            for(int k = 0; k < 3; k++) {
+            for(int k = 0; k < km; k++) {
                 long x = Range.pickFrom(mx, m);
                 long xx = 1;
                 long y = Range.pickFrom(-4, 4);
