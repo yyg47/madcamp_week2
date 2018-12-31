@@ -1,8 +1,10 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +15,7 @@ import io.github.kexanie.library.MathView;
 import io.lumiknit.mathp.*;
 
 public class GameActivity extends AppCompatActivity {
+    private static final int NEXT_PROBLEM_DELAY = 1000;
 
     /* 게임 난이도 */
     private int level;
@@ -23,9 +26,13 @@ public class GameActivity extends AppCompatActivity {
 
 
     /* 답안 카드 */
-    private View[] ansCards;
+    private CardView[] ansCards;
     private MathView problemMathView;
     private MathView[] ansMathViews;
+    private int currentAnswer;
+
+    private Handler nextProblemHandler;
+    private Runnable nextProblemRunnable;
 
     /* 정답 오답 표기용 */
     private Toast resultToast;
@@ -46,9 +53,9 @@ public class GameActivity extends AppCompatActivity {
 
         level = intent.getIntExtra("level", 0);
         switch(level) {
-            case 0: problemSet = new IntProblemSet(); break;
-            case 1: break;
-            case 2: break;
+            case 0: problemSet = new AddSubProblemSet(0); break;
+            case 1: problemSet = new ComplexArithmeticProblemSet(0); break;
+            case 2: problemSet = new IntProblemSet(); break;
         }
 
 
@@ -74,11 +81,19 @@ public class GameActivity extends AppCompatActivity {
         ansMathViews[3] = findViewById(R.id.math_ans4);
 
         /* 답안 카드 찾기 */
-        ansCards = new View[4];
+        ansCards = new CardView[4];
         ansCards[0] = findViewById(R.id.card_ans1);
         ansCards[1] = findViewById(R.id.card_ans2);
         ansCards[2] = findViewById(R.id.card_ans3);
         ansCards[3] = findViewById(R.id.card_ans4);
+
+        nextProblemHandler = new Handler();
+        nextProblemRunnable = new Runnable() {
+            @Override
+            public void run() {
+                nextProblem();
+            }
+        };
 
         /* onClickListener 만들기 */
         resultToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
@@ -88,7 +103,8 @@ public class GameActivity extends AppCompatActivity {
                 resultToast.setText("정답");
                 resultToast.show();
                 updateScore(score + 10);
-                nextProblem();
+                showAnswer();
+                nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
             }
         };
         wrongOnClick = new View.OnClickListener() {
@@ -97,7 +113,8 @@ public class GameActivity extends AppCompatActivity {
                 resultToast.setText("오답");
                 resultToast.show();
                 updateScore(score - 5);
-                nextProblem();
+                showAnswer();
+                nextProblemHandler.postDelayed(nextProblemRunnable, NEXT_PROBLEM_DELAY);
             }
         };
 
@@ -113,6 +130,11 @@ public class GameActivity extends AppCompatActivity {
             v.setOnClickListener(wrongOnClick);
         }
         ansCards[n].setOnClickListener(correctOnClick);
+        currentAnswer = n;
+    }
+
+    private void showAnswer() {
+        ansCards[currentAnswer].setCardBackgroundColor(getResources().getColor(R.color.colorButtonCorrect));
     }
 
     private void nextProblem() {
@@ -129,6 +151,7 @@ public class GameActivity extends AppCompatActivity {
         while(a[ans] != 0) ans++;
         for(int i = 0; i < 4; i++) {
             ansMathViews[i].setText("\\[" + set.answers[a[i]].toTex() + "\\]");
+            ansCards[i].setCardBackgroundColor(getResources().getColor(R.color.colorButton));
         }
         setAnswer(ans);
     }

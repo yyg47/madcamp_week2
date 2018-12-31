@@ -103,25 +103,25 @@ public class IntElemProblem extends Problem {
                 ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), x));
             } break;
             case 9: {
-                pExpr = integral(null, null, new Frac(x, new Add(one, new Add(new Superscript(x, two), new Superscript(x, new Number(4))))), x);
+                pExpr = integral(null, null, new Frac(x, new Add(one, new Add(new Mul(two, new Superscript(x, two)), new Superscript(x, new Number(4))))), x);
                 ans[0] = plusC(new Minus(new Frac(one, new Mul(two, round(new Add(one, new Superscript(x, two)))))));
                 ans[1] = plusC(new Mul(new Frac(one, two), new Log(null, new Frac(new Add(one, x), new Sub(one, x)))));
                 ans[2] = plusC(new Mul(two, new Log(null, round(new Add(one, new Superscript(x, two))))));
-                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), new Add(one, new Superscript(x, two))));
+                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), round(new Add(one, new Superscript(x, two)))));
             } break;
             case 10: {
                 pExpr = integral(null, null, new Frac(one, new Sqrt(new Add(one, new Superscript(x, two)))), x);
                 ans[0] = plusC(new Mul(new Superscript(new Text("sinh"), new Number(-1)), x));
                 ans[1] = plusC(new Mul(new Superscript(new Text("tanh"), new Number(-1)), x));
                 ans[2] = plusC(new Sqrt(new Add(one, new Superscript(x, two))));
-                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), new Add(one, new Superscript(x, two))));
+                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), round(new Add(one, new Superscript(x, two)))));
             } break;
             case 11: {
                 pExpr = integral(null, null, new Frac(one, new Sqrt(new Sub(one, new Superscript(x, two)))), x);
                 ans[0] = plusC(new Mul(new Superscript(new Text("sin"), new Number(-1)), x));
                 ans[1] = plusC(new Mul(new Superscript(new Text("sinh"), new Number(-1)), x));
                 ans[2] = plusC(new Mul(new Superscript(new Text("tanh"), new Number(-1)), x));
-                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), new Add(one, new Superscript(x, two))));
+                ans[3] = plusC(new Mul(new Superscript(new Text("tan"), new Number(-1)), round(new Add(one, new Superscript(x, two)))));
             } break;
             case 12: {
                 pExpr = integral(null, null, new Frac(x, new Sqrt(new Add(one, new Superscript(x, two)))), x);
