@@ -14,13 +14,12 @@
     <TextView
         android:id="@+id/text_view_score"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="100"/>
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/button_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="뒤로가기"/>
+        android:text="처음으로" />
 
 </LinearLayout>

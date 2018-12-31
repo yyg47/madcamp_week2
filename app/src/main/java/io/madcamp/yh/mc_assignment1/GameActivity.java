@@ -1,5 +1,8 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -7,12 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import io.github.kexanie.library.MathView;
+import io.lumiknit.mathe.Text;
 import io.lumiknit.mathp.*;
 
 public class GameActivity extends AppCompatActivity {
@@ -67,24 +72,61 @@ public class GameActivity extends AppCompatActivity {
         nextProblem();
 
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
-        new CountDownTimer(30000,1000) {
+        new CountDownTimer(6000,1000) {
             public void onTick(long millisUntilFinished){
-                // zzzzz.setText(millisUntilFinished/1000 + "초 남았습니다!!");
+                TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
+                textview_timeleft.setText(millisUntilFinished/1000 + "초 남았습니다!!");
             }
             public void onFinish(){
-                // zzzzzz.setText("끝!!");
+                TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
+                textview_timeleft.setText("끝!!");
+
+                AlertDialog.Builder builder3 = new AlertDialog.Builder(GameActivity.this);
+
+                if (score > 100) {
+                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 난이도를 높여보세요!");
+                }
+
+                else if (score > 70) {
+                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 조금만 더 노력해봐요!");
+                }
+
+                else {
+                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 차라리 계산기를 두들기는게...");
+                }
+
+                builder3.setTitle("짜라란!")
+                        .setCancelable(false)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                openScoreActivity();
+                            }
+                        });
+                AlertDialog alert3 = builder3.create();
+                alert3.show();
+
             }
         }.start();
 
-        /* intent 택배에 점수 저장하기!*/
-        Intent intent_score = new Intent(this, GameActivity.class);
-        intent_score.putExtra("Game_Score",  score);
+
+
+
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    public void openScoreActivity() {
+        Intent intent_score = new Intent(this, ScoreActivity.class);
+        intent_score.putExtra("Game_Score",score);
+        /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
+        String User = new String(getIntent().getStringExtra("UserName"));
+        intent_score.putExtra("UserName",User);
+        startActivity(intent_score);
     }
 
     /* 답안 카드에 대한 것들을 초기화합니다. */

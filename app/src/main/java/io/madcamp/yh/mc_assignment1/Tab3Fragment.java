@@ -50,16 +50,16 @@ public class Tab3Fragment extends Fragment {
         this.context = top.getContext();
 
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        EditText setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
-        Intent intent_username = new Intent(getActivity(),GameActivity.class);
-        intent_username.putExtra("UserName",setname_edittext.getText().toString());
+        final EditText setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
 
         /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
         top.findViewById(R.id.button_start_0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Easy);
+                intent.putExtra("Game_Difficulty", Difficulty_Easy);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("UserName",setname_edittext.getText().toString());
                 startActivity(intent);
             }
         });
@@ -68,7 +68,9 @@ public class Tab3Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Normal);
+                intent.putExtra("Game_Difficulty", Difficulty_Normal);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("UserName",setname_edittext.getText().toString());
                 startActivity(intent);
             }
         });
@@ -77,7 +79,9 @@ public class Tab3Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_difficulty", Difficulty_Hard);
+                intent.putExtra("Game_Difficulty", Difficulty_Hard);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("UserName",setname_edittext.getText().toString());
                 startActivity(intent);
             }
         });

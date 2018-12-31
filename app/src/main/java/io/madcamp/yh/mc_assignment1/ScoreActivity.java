@@ -4,12 +4,15 @@ package io.madcamp.yh.mc_assignment1;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class ScoreActivity extends AppCompatActivity {
 
@@ -17,18 +20,19 @@ public class ScoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
-      
+
         /* 우선 intent_username 택배로 보내둔 정보를 받을게요 */
 
-        // String UserName =;
-
-
+        String UserName =  getIntent().getStringExtra("UserName");
 
         /* intent_score 에 저장해둔 정보를 받을게요 */
-
-
+        int score = getIntent().getIntExtra("Game_Score",-1);
 
         /* UserName, final_score을 이용하여 땡땡땡의 점수는 final_score 입니다! */
+
+        TextView text_view_score = (TextView) findViewById(R.id.text_view_score);
+        text_view_score.setText(score + "점 입니다!!");
+
 
 
 
@@ -45,8 +49,9 @@ public class ScoreActivity extends AppCompatActivity {
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                finish(); /* addcontact 할때는 이걸로해서 쉽게 뒤로 갔는데 이번에도 이걸로 될지는 모르겠네요.. */
+                            finish();
                             }
+
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             @Override
@@ -58,5 +63,8 @@ public class ScoreActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+
+
     }
+
 }
