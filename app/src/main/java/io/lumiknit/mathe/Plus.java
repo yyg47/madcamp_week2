@@ -4,7 +4,7 @@ public class Plus extends UnaryOperator {
     @Override
     public String toTex() {
         if(existsNullOperand()) return null;
-        return "{+ {" + getOperand(1).toTex() + "}}";
+        return "{+ {" + getOperand(0).toTex() + "}}";
     }
 
     public Plus() {

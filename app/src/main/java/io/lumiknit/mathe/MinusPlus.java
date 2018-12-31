@@ -11,6 +11,6 @@ public class MinusPlus extends UnaryOperator {
     @Override
     public String toTex() {
         if(existsNullOperand()) return null;
-        return "{\\pm {" + getOperand(1).toTex() + "}}";
+        return "{\\pm {" + getOperand(0).toTex() + "}}";
     }
 }

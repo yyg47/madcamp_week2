@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import io.github.kexanie.library.MathView;
 import io.lumiknit.mathp.*;
 
@@ -44,7 +46,7 @@ public class GameActivity extends AppCompatActivity {
 
         level = intent.getIntExtra("level", 0);
         switch(level) {
-            case 0: problemSet = new ComplexArithmeticProblemSet(0); break;
+            case 0: problemSet = new IntProblemSet(); break;
             case 1: break;
             case 2: break;
         }
@@ -116,14 +118,19 @@ public class GameActivity extends AppCompatActivity {
     private void nextProblem() {
         Set set = problemSet.generate();
         problemMathView.setText("\\[" + set.problem.toTex() + "\\]");
-        int[] a = new int[]{0, 1, 2, 3};
-        int n = (int)Range.pickFrom(0, 4);
-        a[n] = 0;
-        a[0] = n;
+        ArrayList<Integer> arr = new ArrayList<>();
+        arr.add(0); arr.add(1); arr.add(2); arr.add(3);
+        int[] a = new int[4];
+        for(int i = 0; i < 4; i++) {
+            int j = (int)Range.pickFrom(0, arr.size());
+            a[i] = arr.remove(j);
+        }
+        int ans = 0;
+        while(a[ans] != 0) ans++;
         for(int i = 0; i < 4; i++) {
             ansMathViews[i].setText("\\[" + set.answers[a[i]].toTex() + "\\]");
         }
-        setAnswer(n);
+        setAnswer(ans);
     }
 
     private void updateScore(int newScore) {
