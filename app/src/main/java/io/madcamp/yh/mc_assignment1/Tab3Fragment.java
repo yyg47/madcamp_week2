@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public class Tab3Fragment extends Fragment {
     private int mPage;
     private Context context;
     private View top;
+    public static final int Difficulty_Easy = 0;
+    public static final int Difficulty_Normal = 1;
+    public static final int Difficulty_Hard = 2;
 
     private static final String[] BUTTON_LABELS = {
             "덧셈/뺄셈", "복합", "적분"
@@ -36,24 +40,47 @@ public class Tab3Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         top = inflater.inflate(R.layout.fragment_tab3, container, false);
         this.context = top.getContext();
 
-        buttons = new Button[3];
-        buttons[0] = top.findViewById(R.id.button_start_0);
-        buttons[1] = top.findViewById(R.id.button_start_1);
-        buttons[2] = top.findViewById(R.id.button_start_2);
+        /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
+        EditText setname_edittext = (EditText) getView().findViewById(R.id.setname_edittext);
+        Intent intent_username = new Intent(getActivity(),GameActivity.class);
+        intent_username.putExtra("UserName",setname_edittext.getText().toString());
 
+        /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
+        top.findViewById(R.id.button_start_0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GameActivity.class);
+                intent.putExtra("Game_difficulty", Difficulty_Easy);
+                startActivity(intent);
+            }
+        });
 
+        top.findViewById(R.id.button_start_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GameActivity.class);
+                intent.putExtra("Game_difficulty", Difficulty_Normal);
+                startActivity(intent);
+            }
+        });
 
-        for(int i = 0; i < buttons.length; i++) {
-            buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
-        }
-
+        top.findViewById(R.id.button_start_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GameActivity.class);
+                intent.putExtra("Game_difficulty", Difficulty_Hard);
+                startActivity(intent);
+            }
+        });
 
         return top;
     }
@@ -61,27 +88,5 @@ public class Tab3Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        ArrayList<Integer> scores = GameScoreManager.loadHiScores(getActivity());
-        for(int i = 0; i < buttons.length; i++) {
-            int score = i < scores.size() ? scores.get(i) : 0;
-            buttons[i].setText(BUTTON_LABELS[i] + " (최고기록: " + score + ")");
-        }
-    }
-
-    private class StartButtonOnClickListener implements View.OnClickListener {
-        private int level;
-
-        public StartButtonOnClickListener(int level) {
-            this.level = level;
-        }
-
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), GameActivity.class);
-            intent.putExtra("level", level);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            startActivity(intent);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class GameActivity extends AppCompatActivity {
         /* Intent에서 게임 난이도 불러오기 */
         Intent intent = getIntent();
 
-        level = intent.getIntExtra("level", 0);
+        level = intent.getIntExtra("Game_Difficulty", -1);
         switch(level) {
             case 0: problemSet = new AddSubProblemSet(0); break;
             case 1: problemSet = new ComplexArithmeticProblemSet(0); break;
@@ -65,6 +66,18 @@ public class GameActivity extends AppCompatActivity {
         nextProblem();
 
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
+        new CountDownTimer(30000,1000) {
+            public void onTick(long millisUntilFinished){
+                zzzzz.setText(millisUntilFinished/1000 + "초 남았습니다!!");
+            }
+            public void onFinish(){
+                zzzzzz.setText("끝!!");
+            }
+        }.start();
+
+        /* intent 택배에 점수 저장하기!*/
+        Intent intent_score = new Intent(this, GameActivity.class);
+        intent_score.putExtra("Game_Score",  score);
     }
 
     @Override
@@ -162,12 +175,5 @@ public class GameActivity extends AppCompatActivity {
         score = newScore;
         scoreTextView.setText("" + score);
         if(score >= 30) finishGame();
-    }
-
-    private void finishGame() {
-        Intent intent = new Intent(this, ScoreActivity.class);
-        intent.putExtra("level", level);
-        intent.putExtra("score", score);
-        startActivity(intent);
     }
 }
