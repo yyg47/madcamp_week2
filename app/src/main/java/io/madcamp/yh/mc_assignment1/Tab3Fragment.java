@@ -65,6 +65,15 @@ public class Tab3Fragment extends Fragment {
             buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
         }
 
+        Button button_ranking = top.findViewById(R.id.button_ranking);
+        button_ranking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScoreActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return top;
     }
 
@@ -113,4 +122,6 @@ public class Tab3Fragment extends Fragment {
             }
         }
     }
+
+
 }
