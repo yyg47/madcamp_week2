@@ -18,6 +18,7 @@ public class Tab3Fragment extends Fragment {
     private int mPage;
     private Context context;
     private View top;
+    private EditText setname_edittext;
 
     private static final String[] BUTTON_LABELS = {
             "쉬움", "보통", "어려움", "매우 어려움?"
@@ -46,7 +47,7 @@ public class Tab3Fragment extends Fragment {
         this.context = top.getContext();
 
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        Intent intent_username = new Intent(getActivity(),GameActivity.class);
+        setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
 
         buttons = new Button[BUTTON_LABELS.length];
         buttons[0] = (Button)top.findViewById(R.id.button_start_0);
@@ -83,6 +84,7 @@ public class Tab3Fragment extends Fragment {
         public void onClick(View v) {
             Intent intent = new Intent(getActivity(), GameActivity.class);
             intent.putExtra("Game_Difficulty", difficulty);
+            intent.putExtra("UserName",setname_edittext.getText().toString());
             startActivity(intent);
         }
     }
