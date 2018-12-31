@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.media.ExifInterface;
 import android.net.Uri;
@@ -284,7 +285,8 @@ public class Tab2Fragment extends Fragment {
 
     public void addImageFromFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        if(Build.VERSION.SDK_INT >= 18)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
         startActivityForResult(intent, REQ_IMG_FILE);
     }
@@ -360,9 +362,11 @@ public class Tab2Fragment extends Fragment {
             switch(requestCode) {
                 case REQ_IMG_FILE:
                     if(data.getData() != null) {
+                        Log.d("Test@onRes", "Single");
                         addImage(data.getData());
-                    } else if(android.os.Build.VERSION.SDK_INT > 16) {
+                    } else if(android.os.Build.VERSION.SDK_INT >= 18) {
                         if (data.getClipData() != null) {
+                            Log.d("Test@onRes", "Multiple");
                             ClipData clipData = data.getClipData();
                             for (int i = 0; i < clipData.getItemCount(); i++) {
                                 addImage(clipData.getItemAt(i).getUri());

@@ -119,7 +119,6 @@ public class Tab1Fragment extends Fragment {
                             Intent intent = new Intent("android.intent.action.DIAL",Uri.parse("tel:" + contacts.get(position).second));
                             startActivity(intent);
                         }
-
                     }
                 });
 

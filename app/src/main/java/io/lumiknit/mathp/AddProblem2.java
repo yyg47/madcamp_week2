@@ -19,12 +19,13 @@ public class AddProblem2 extends Problem {
 
         long[] d = new long[]{0, 0, 0};
 
-        long m = (long) Math.floor(Math.log10(Math.abs(l) + Math.abs(r))) + 1;
+        long m = (long) Math.floor(Math.log10(Math.abs(l) + Math.abs(r)));
         long mx = m > 3 ? 2 : 0;
 
+        long km = Math.max(1, 1 + m / 2);
         for (int i = 0; i < d.length; i++) {
             long z = 0;
-            for(int k = 0; k < 3; k++) {
+            for(int k = 0; k < km; k++) {
                 long x = Range.pickFrom(mx, m);
                 long xx = 1;
                 long y = Range.pickFrom(-4, 4);
