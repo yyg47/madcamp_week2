@@ -14,7 +14,7 @@
             android:id="@+id/text_view_ranking"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="48dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginRight="48dp"
             android:layout_marginBottom="8dp"
             android:gravity="bottom|start"

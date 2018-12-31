@@ -71,6 +71,7 @@ public class Tab3Fragment extends Fragment {
         for(int i = 0; i < buttons.length; i++) {
             buttons[i].setText(BUTTON_LABELS[i] + " (최고기록: " + manager.getScore(i, 0) + ")");
         }
+        setname_edittext.setText(manager.lastName);
     }
 
     public class StartButtonOnClickListener implements View.OnClickListener {
@@ -82,9 +83,14 @@ public class Tab3Fragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            GameScoreManager m = new GameScoreManager(getActivity());
+            m.lastName = setname_edittext.getText().toString();
+            m.save();
+
             Intent intent = new Intent(getActivity(), GameActivity.class);
             intent.putExtra("Game_Difficulty", difficulty);
-            intent.putExtra("UserName",setname_edittext.getText().toString());
+            intent.putExtra("UserName", m.lastName);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
         }
     }

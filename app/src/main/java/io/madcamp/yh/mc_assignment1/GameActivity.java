@@ -52,6 +52,9 @@ public class GameActivity extends AppCompatActivity {
     /* 문제 */
     private ProblemSet problemSet;
 
+    /* 타이머 */
+    private CountDownTimer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,7 @@ public class GameActivity extends AppCompatActivity {
         nextProblem();
 
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
-        new CountDownTimer(6000,1000) {
+        timer = new CountDownTimer(6000,1000) {
             public void onTick(long millisUntilFinished){
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
                 textview_timeleft.setText(millisUntilFinished/1000 + "초 남았습니다!!");
@@ -112,17 +115,14 @@ public class GameActivity extends AppCompatActivity {
                 alert3.show();
 
             }
-        }.start();
-
-
-
-
-
+        };
+        timer.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        timer.cancel();
     }
 
     public void openScoreActivity() {
@@ -131,6 +131,7 @@ public class GameActivity extends AppCompatActivity {
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
         String User = new String(getIntent().getStringExtra("UserName"));
         intent_score.putExtra("UserName",User);
+        intent_score.putExtra("level", level);
         startActivity(intent_score);
     }
 

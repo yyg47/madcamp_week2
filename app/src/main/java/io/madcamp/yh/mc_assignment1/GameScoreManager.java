@@ -1,6 +1,7 @@
 package io.madcamp.yh.mc_assignment1;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.*;
 
@@ -21,18 +22,17 @@ public class GameScoreManager {
     }
 
     public Context context;
-    public String lastName;
-    public ArrayList<ArrayList<ScoreSet>> list;
+    public String lastName = "";
+    public ArrayList<ArrayList<ScoreSet>> list = new ArrayList<>();
 
     public GameScoreManager(Context context) {
         this.context = context;
         load();
-        lastName = "";
-        list = new ArrayList<>();
     }
 
     public void load() {
         try {
+            Log.d("Test@ScoreManager", "Loading");
             FileInputStream fis;
             InputStreamReader isr;
             BufferedReader br;
@@ -46,8 +46,9 @@ public class GameScoreManager {
                 sb.append(line);
             }
             fis.close();
-
             String src = sb.toString();
+            Log.d("Test@Contents", src);
+
             JSONObject obj = new JSONObject(src);
             lastName = obj.getString("lastName");
             JSONArray arr = obj.getJSONArray("scores");
@@ -62,6 +63,7 @@ public class GameScoreManager {
                 }
                 list.add(l);
             }
+            Log.d("Test@ScoreManager", "Loaded");
         } catch(IOException e) {
             e.printStackTrace();
         } catch(JSONException e) {
@@ -71,6 +73,7 @@ public class GameScoreManager {
 
     public void save() {
         try {
+            Log.d("Test@ScoreManager", "Saving");
             JSONObject obj = new JSONObject();
             obj.put("lastName", lastName);
             JSONArray arr = new JSONArray();
@@ -87,10 +90,12 @@ public class GameScoreManager {
             obj.put("scores", arr);
 
             String contents = obj.toString();
+            Log.d("Test@Contents", contents);
             FileOutputStream fos;
             fos = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
             fos.write(contents.getBytes());
             fos.close();
+            Log.d("Test@ScoreManager", "Saved");
         } catch(IOException e) {
             e.printStackTrace();
         } catch(JSONException e) {
@@ -140,7 +145,7 @@ public class GameScoreManager {
         for(int i = 0; ; i++) {
             String name = getName(n, i);
             if(name == null) break;
-            sb.append(Integer.toString(n)).append(". ")
+            sb.append("#").append(Integer.toString(i + 1)).append(" ")
                     .append(name).append(" ")
                     .append(Integer.toString(getScore(n, i))).append("\n");
         }

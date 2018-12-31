@@ -34,50 +34,32 @@ public class ScoreActivity extends AppCompatActivity {
         text_view_score.setText(score + "점 입니다!!");
 
 
-
-
         /* 뒤로가기 버튼 설정 시작!! */
 
         Button button_back = findViewById(R.id.button_back);
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ScoreActivity.this);
-                builder.setMessage("현재 점수는 초기화 됩니다. 정말 뒤로 가시겠습니까?");
-                builder.setTitle("뒤로가기")
-                        .setCancelable(false)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                            }
-
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+                finish();
             }
         });
 
         /* Load score information */
-        int level = 0;
-        int score = 0;
+        int level = getIntent().getIntExtra("level", 0);
         GameScoreManager manager = new GameScoreManager(this);
-        ((TextView)findViewById(R.id.text_view_score_board))
-                .setText(manager.toString(level));
+        manager.load();
         int ranking = manager.guessRanking(level, score);
         if(0 <= ranking && ranking < 10) {
             ((TextView)findViewById(R.id.text_view_ranking))
-                    .setText("#" + ranking);
+                    .setText("#" + (ranking + 1));
+            manager.add(level, UserName, score);
+            manager.save();
         } else {
             ((TextView)findViewById(R.id.text_view_ranking))
                     .setText("");
         }
+        ((TextView)findViewById(R.id.text_view_score_board))
+                .setText(manager.toString(level));
     }
 
 }
