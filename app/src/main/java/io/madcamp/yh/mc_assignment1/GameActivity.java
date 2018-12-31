@@ -56,6 +56,7 @@ public class GameActivity extends AppCompatActivity {
             case 0: problemSet = new AddSubProblemSet(0); break;
             case 1: problemSet = new ComplexArithmeticProblemSet(0); break;
             case 2: problemSet = new IntProblemSet(); break;
+            default: problemSet = new AddSubProblemSet(0); break;
         }
 
         /* 점수 초기화 */
@@ -68,16 +69,17 @@ public class GameActivity extends AppCompatActivity {
         /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
         new CountDownTimer(30000,1000) {
             public void onTick(long millisUntilFinished){
-                zzzzz.setText(millisUntilFinished/1000 + "초 남았습니다!!");
+                // zzzzz.setText(millisUntilFinished/1000 + "초 남았습니다!!");
             }
             public void onFinish(){
-                zzzzzz.setText("끝!!");
+                // zzzzzz.setText("끝!!");
             }
         }.start();
 
         /* intent 택배에 점수 저장하기!*/
         Intent intent_score = new Intent(this, GameActivity.class);
         intent_score.putExtra("Game_Score",  score);
+
     }
 
     @Override
@@ -174,6 +176,5 @@ public class GameActivity extends AppCompatActivity {
     private void updateScore(int newScore) {
         score = newScore;
         scoreTextView.setText("" + score);
-        if(score >= 30) finishGame();
     }
 }

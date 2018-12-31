@@ -50,7 +50,7 @@ public class Tab3Fragment extends Fragment {
         this.context = top.getContext();
 
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        EditText setname_edittext = (EditText) getView().findViewById(R.id.setname_edittext);
+        EditText setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
         Intent intent_username = new Intent(getActivity(),GameActivity.class);
         intent_username.putExtra("UserName",setname_edittext.getText().toString());
 

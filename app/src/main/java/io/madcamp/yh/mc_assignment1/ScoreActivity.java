@@ -20,7 +20,7 @@ public class ScoreActivity extends AppCompatActivity {
       
         /* 우선 intent_username 택배로 보내둔 정보를 받을게요 */
 
-        String UserName =;
+        // String UserName =;
 
 
 
@@ -38,7 +38,7 @@ public class ScoreActivity extends AppCompatActivity {
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ScoreActivity.this);
                 builder.setMessage("현재 점수는 초기화 됩니다. 정말 뒤로 가시겠습니까?");
                 builder.setTitle("뒤로가기")
                         .setCancelable(false)
@@ -46,7 +46,7 @@ public class ScoreActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 finish(); /* addcontact 할때는 이걸로해서 쉽게 뒤로 갔는데 이번에도 이걸로 될지는 모르겠네요.. */
-                                }
+                            }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
                             @Override
@@ -56,5 +56,7 @@ public class ScoreActivity extends AppCompatActivity {
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+            }
+        });
     }
 }
