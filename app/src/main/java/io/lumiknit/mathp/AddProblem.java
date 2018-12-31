@@ -15,7 +15,8 @@ public class AddProblem extends Problem {
         Expr rt = new Number(r);
         if(r < 0) rt = new Paren(Paren.TYPE_ROUND, rt);
         Expr lhs = new Add(new Number(l), rt);
-        Texable p = new Equal(lhs, new Question());
+        Statement p = new Equal(lhs, new Question());
+        p = new Statements(new Statement[]{p, p});
 
         long[] d = new long[3];
         for(int i = 0; i < d.length; i++) {

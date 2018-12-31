@@ -55,7 +55,8 @@ public class GameActivity extends AppCompatActivity {
         switch(level) {
             case 0: problemSet = new AddSubProblemSet(0); break;
             case 1: problemSet = new ComplexArithmeticProblemSet(0); break;
-            case 2: problemSet = new IntProblemSet(); break;
+            case 2: problemSet = new EqProblemSet(1); break;
+            case 3: problemSet = new IntProblemSet(); break;
             default: problemSet = new AddSubProblemSet(0); break;
         }
 

@@ -98,6 +98,12 @@ public class GameScoreManager {
         }
     }
 
+    public String getName(int level, int n) {
+        if(list == null || level >= list.size() || n >= list.get(level).size())
+            return null;
+        return list.get(level).get(n).name;
+    }
+
     public int getScore(int level, int n) {
         if(list == null || level >= list.size() || n >= list.get(level).size())
             return 0;
@@ -119,5 +125,25 @@ public class GameScoreManager {
         while(level >= list.size())
             list.add(new ArrayList<ScoreSet>());
         list.get(level).add(r, new ScoreSet(name, score));
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < list.size(); i++) {
+            sb.append(toString(i)).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String toString(int n) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; ; i++) {
+            String name = getName(n, i);
+            if(name == null) break;
+            sb.append(Integer.toString(n)).append(". ")
+                    .append(name).append(" ")
+                    .append(Integer.toString(getScore(n, i))).append("\n");
+        }
+        return sb.toString();
     }
 }
