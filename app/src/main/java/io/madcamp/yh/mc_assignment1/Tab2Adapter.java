@@ -1,13 +1,8 @@
 package io.madcamp.yh.mc_assignment1;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolder> {
@@ -52,7 +46,6 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
         return uri;
     }
 
-
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -63,7 +56,7 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder viewHolder, int i) {
-        ImageViewHolder vh = (ImageViewHolder)viewHolder;
+        final ImageViewHolder vh = viewHolder;
         Pair<Uri, String> p = dataset.get(i);
         vh.setBitmap(p.first);
         vh.textView.setText(p.second);
@@ -76,10 +69,16 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
 
     public String getOriginalPath(int position) {
         Uri uri = dataset.get(position).first;
-        String thPath = uri.getPath();
-        int i = thPath.lastIndexOf("/");
-        String dir = thPath.substring(0, i);
-        String filename = thPath.substring(i + 1);
-        return dir + "/O_" + filename;
+        String dir;
+        String filename;
+        try {
+            String thPath = uri.getPath();
+            int i = thPath.lastIndexOf("/");
+            dir = thPath.substring(0, i) + "/";
+            filename = thPath.substring(i + 1);
+        } catch(NullPointerException e) {
+            return null;
+        }
+        return dir + "O_" + filename;
     }
 }

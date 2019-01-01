@@ -80,7 +80,6 @@ public class Tab2Fragment extends Fragment {
         top = inflater.inflate(R.layout.fragment_tab2, container, false);
         this.context = (Context)getActivity();
 
-        /* -- 여기서부터 작성해주세요 -- */
         initializeFloatingActionButton();
         initializeRecyclerView();
 
@@ -90,19 +89,15 @@ public class Tab2Fragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        saveImageListToInternal();
     }
 
     public void initializeFloatingActionButton() {
         final FloatingActionButton[] fab = new FloatingActionButton[4];
 
-        final Animation fab_open = AnimationUtils.loadAnimation(context, R.anim.fab_open);
-        final Animation fab_close = AnimationUtils.loadAnimation(context, R.anim.fab_close);
-
-        fab[0] = (FloatingActionButton)top.findViewById(R.id.fab);
-        fab[1] = (FloatingActionButton)top.findViewById(R.id.fab1);
-        fab[2] = (FloatingActionButton)top.findViewById(R.id.fab2);
-        fab[3] = (FloatingActionButton)top.findViewById(R.id.fab3);
+        fab[0] = top.findViewById(R.id.fab);
+        fab[1] = top.findViewById(R.id.fab1);
+        fab[2] = top.findViewById(R.id.fab2);
+        fab[3] = top.findViewById(R.id.fab3);
 
         isFabOpen = false;
 
@@ -296,8 +291,7 @@ public class Tab2Fragment extends Fragment {
         if(intent.resolveActivity(context.getPackageManager()) != null) {
             File photoFile = null;
             try {
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = timeStamp;
+                String imageFileName = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                 photoFile = File.createTempFile(imageFileName, ".jpg", storageDir);
             } catch(IOException e) {
@@ -308,18 +302,6 @@ public class Tab2Fragment extends Fragment {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, tempPhotoUri);
                 startActivityForResult(intent, REQ_TAKE_PHOTO);
             }
-        }
-    }
-
-    private static String decodeFilename(Uri uri) {
-        try {
-            String path = URLDecoder.decode(uri.toString(), "UTF-8");
-            String filename = path.substring(path.lastIndexOf("/") + 1);
-            if(filename.length() < 1) filename = "noname";
-            return filename;
-
-        } catch(Exception e) {
-            return "noname";
         }
     }
 
@@ -387,15 +369,10 @@ public class Tab2Fragment extends Fragment {
         saveImageListToInternal();
     }
 
-
     private Uri copyToInternal(Uri uri) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = timeStamp + ".jpg";
         try {
-            String newDir = context.getFilesDir().toString();
-            File fout = new File(newDir, "images");
-            fout.mkdir();
-
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
@@ -421,7 +398,6 @@ public class Tab2Fragment extends Fragment {
             fosRotated.close();
 
             /* scaling */
-
             float scaleFactor = 1.f;
             if(width < height) scaleFactor = 256.f / (float)width;
             else scaleFactor = 256.f / (float)height;

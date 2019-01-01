@@ -25,12 +25,6 @@ public class Tab3Fragment extends Fragment {
     private View top;
     private EditText setname_edittext;
 
-    public static final int BUTTON_LABELS[] = {
-            R.string.level_0,
-            R.string.level_1,
-            R.string.level_2,
-            R.string.level_3,
-    };
     private Button[] buttons;
 
     /* TabPagerAdapter에서 Fragment 생성할 때 사용하는 메소드 */
@@ -46,7 +40,6 @@ public class Tab3Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
-
     }
 
     @Override
@@ -55,24 +48,27 @@ public class Tab3Fragment extends Fragment {
         this.context = top.getContext();
 
         /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        setname_edittext = (EditText) top.findViewById(R.id.setname_edittext);
+        setname_edittext = top.findViewById(R.id.setname_edittext);
 
-        buttons = new Button[BUTTON_LABELS.length];
-        buttons[0] = (Button)top.findViewById(R.id.button_start_0);
-        buttons[1] = (Button)top.findViewById(R.id.button_start_1);
-        buttons[2] = (Button)top.findViewById(R.id.button_start_2);
-        buttons[3] = (Button)top.findViewById(R.id.button_start_3);
+        /* 게임 시작 버튼 설정 */
+        buttons = new Button[] {
+                top.findViewById(R.id.button_start_0),
+                top.findViewById(R.id.button_start_1),
+                top.findViewById(R.id.button_start_2),
+                top.findViewById(R.id.button_start_3),
+        };
 
-        /* 난이도 별로 눌렀을때 intent 택배에 난이도 값을 저장해주었는데 맞는지는 모르겠네요.. 난이도 값은 위에 public static final int로 저장해두었습니다 */
         for(int i = 0; i < buttons.length; i++) {
             buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
         }
 
-        Button[] rankingButtons = new Button[BUTTON_LABELS.length];
-        rankingButtons[0] = top.findViewById(R.id.button_ranking_0);
-        rankingButtons[1] = top.findViewById(R.id.button_ranking_1);
-        rankingButtons[2] = top.findViewById(R.id.button_ranking_2);
-        rankingButtons[3] = top.findViewById(R.id.button_ranking_3);
+        /* 랭킹 버튼 설정 */
+        Button[] rankingButtons = new Button[] {
+                top.findViewById(R.id.button_ranking_0),
+                top.findViewById(R.id.button_ranking_1),
+                top.findViewById(R.id.button_ranking_2),
+                top.findViewById(R.id.button_ranking_3),
+        };
         for(int i = 0; i < rankingButtons.length; i++) {
             rankingButtons[i].setOnClickListener(new RankingButtonOnClickListener(i));
         }
@@ -85,8 +81,9 @@ public class Tab3Fragment extends Fragment {
         super.onResume();
 
         GameScoreManager manager = new GameScoreManager(getActivity());
+        String[] labels = getResources().getStringArray(R.array.level);
         for(int i = 0; i < buttons.length; i++) {
-            buttons[i].setText(getString(BUTTON_LABELS[i]) + " (최고기록: " + manager.getScore(i, 0) + ")");
+            buttons[i].setText(labels[i] + " (최고기록: " + manager.getScore(i, 0) + ")");
         }
         setname_edittext.setText(manager.lastName);
     }
@@ -106,8 +103,8 @@ public class Tab3Fragment extends Fragment {
 
             if(setname_edittext.getText().toString().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("이름 입력후 진행해 주세요.");
-                builder.setCancelable(false)
+                builder.setMessage("이름 입력후 진행해 주세요.")
+                        .setCancelable(false)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -118,9 +115,9 @@ public class Tab3Fragment extends Fragment {
                 alert.show();
             } else {
                 Intent intent = new Intent(getActivity(), GameActivity.class);
-                intent.putExtra("Game_Difficulty", difficulty);
-                intent.putExtra("UserName", m.lastName);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("Game_Difficulty", difficulty)
+                        .putExtra("UserName", m.lastName)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
         }
@@ -136,11 +133,9 @@ public class Tab3Fragment extends Fragment {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getActivity(), ScoreActivity.class);
-            intent.putExtra("level", difficulty);
-            intent.putExtra("ranking_only", true);
+            intent.putExtra("level", difficulty)
+                    .putExtra("ranking_only", true);
             startActivity(intent);
         }
     }
-
-
 }

@@ -9,8 +9,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class GameScoreManager {
+    /* 기본 파일 이름 */
     private static final String FILE_NAME = "scores.json";
 
+    /* 이름-점수 Pair를 저장하는 클래스 */
     public static class ScoreSet {
         public String name;
         public int score;
@@ -30,6 +32,8 @@ public class GameScoreManager {
         load();
     }
 
+    /* Context에서 FILE_NAME으로 파일을 찾아서 읽고 파싱하여 값을 전부 가져오는 함수
+     * 만약 실패할 경우 불러오기를 중단하고 초기화합니다. */
     public void load() {
         try {
             Log.d("Test@ScoreManager", "Loading");
@@ -66,10 +70,16 @@ public class GameScoreManager {
             Log.d("Test@ScoreManager", "Loaded");
         } catch(IOException e) {
             e.printStackTrace();
+            lastName = "";
+            list = new ArrayList<>();
         } catch(JSONException e) {
             e.printStackTrace();
+            lastName = "";
+            list = new ArrayList<>();
         }
     }
+
+    /* Context에서 FILE_NAME으로 파일을 찾아서 JSON Format으로 저장합니다. */
 
     public void save() {
         try {
@@ -103,38 +113,50 @@ public class GameScoreManager {
         }
     }
 
-    public ArrayList<ScoreSet> get(int level) {
+    /* 특정 레벨의 점수들을 가져옵니다. */
+    public ArrayList<ScoreSet> getLevel(int level) {
         if(list == null || level >= list.size()) return new ArrayList<>();
         return list.get(level);
     }
 
+    /* 특정 레벨에 몇 개의 기록이 저장되었는지 가져옵니다.
+     * 만약 해당 레벨이 없으면 0이 반환됩니다. */
     public int getSize(int level) {
         if(list == null || level >= list.size()) return 0;
         return list.get(level).size();
     }
 
+    /* 특정 레벨, 특정 등수의 기록의 이름을 가져옵니다.
+     * 만약 해당 레벨 해당 등수의 기록이 없으면 null이 반환됩니다. */
     public String getName(int level, int n) {
         if(list == null || level >= list.size() || n >= list.get(level).size())
             return null;
         return list.get(level).get(n).name;
     }
 
+    /* 특정 레벨, 특정 등수의 기록의 점수를 가져옵니다.
+     * 만약 해당 레벨 해당 등수의 기록이 없으면 0이 반환됩니다. */
     public int getScore(int level, int n) {
         if(list == null || level >= list.size() || n >= list.get(level).size())
             return 0;
         return list.get(level).get(n).score;
     }
 
+    /* 주어진 점수가 해당 레벨 기록 중 몇등으로 들어갈 수 있을지 추정합니다.
+     * 만약 랭킹에 반영될 수가 없는 기록일 경우 -1이 반환됩니다. */
     public int guessRanking(int level, int score) {
         if(score <= 0) return -1;
         int i = 0;
         int n = getSize(level);
+        /* Linear Probing */
         for(; i < n; i++) {
             if(getScore(level, i) < score) break;
         }
         return i;
     }
 
+    /* 주어진 레벨의 기록에 주어진 이름과 점수를 추가합니다.
+     * 만약 랭킹에 반영될 수가 없는 기록이라면 아무것도 하지 않습니다. */
     public void add(int level, String name, int score) {
         int r = guessRanking(level, score);
         if(r < 0) return;

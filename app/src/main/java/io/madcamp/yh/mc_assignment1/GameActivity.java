@@ -25,10 +25,14 @@ import io.lumiknit.mathe.Text;
 import io.lumiknit.mathp.*;
 
 public class GameActivity extends AppCompatActivity {
+    /* Constants for game */
     private static final int TIME_LIMIT = 60000;
     private static final int SCORE_CORRECT = 10;
     private static final int SCORE_WRONG = -5;
     private static final int NEXT_PROBLEM_DELAY = 1000;
+
+    /* 유저 이름 */
+    private String userName;
 
     /* 게임 난이도 */
     private int level;
@@ -37,13 +41,13 @@ public class GameActivity extends AppCompatActivity {
     private int score;
     private TextView scoreTextView;
 
-
     /* 답안 카드 */
     private CardView[] ansCards;
     private MathView problemMathView;
     private MathView[] ansMathViews;
-    private int currentAnswer;
+    private int currentAnswer = -1;
 
+    /* 다음 문제로의 전환에 사용되는 변수들 */
     private Handler nextProblemHandler;
     private Runnable nextProblemRunnable;
 
@@ -63,49 +67,60 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        /* Intent에서 게임 난이도 불러오기 */
-        Intent intent = getIntent();
-
+        /* Intent에서 게임 정보 불러오기 */
+        final Intent intent = getIntent();
+        userName = intent.getStringExtra("UserName");
         level = intent.getIntExtra("Game_Difficulty", -1);
+
+        /* 정보가 이상할 경우 강제로 종료 */
+        if(userName == null || level < 0) {
+            Toast.makeText(this, "Unknown Error", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        /* level을 바탕으로 문제 설정 */
         switch(level) {
             case 0: problemSet = new ArithmeticProblemSet(0); break;
             case 1: problemSet = new ArithmeticProblemSet(1); break;
             case 2: problemSet = new ComplexArithmeticProblemSet(0); break;
             case 3: problemSet = new ComplexArithmeticEqSet(0); break;
-            default: problemSet = new AddSubProblemSet(0); break;
         }
-        ((TextView)findViewById(R.id.text_view_level)).setText(Tab3Fragment.BUTTON_LABELS[level]);
+        String[] levelName = getResources().getStringArray(R.array.level);
+        ((TextView)findViewById(R.id.text_view_level)).setText(levelName[level]);
 
         /* 점수 초기화 */
         scoreTextView = findViewById(R.id.text_view_score);
         updateScore(0);
 
+        /* 답안 카드 초기화 */
         initializeAnsCards();
         nextProblem();
 
-        /* -- 30초 시간제한 (시간 지나면 자동으로 ScoreActivity로 점수 전송) -- */
+        final TextView timeleft_textView = findViewById(R.id.text_view_timeleft);
+
+        /* 게임 시간 제한 설정 */
         timer = new CountDownTimer(TIME_LIMIT,1000) {
             public void onTick(long millisUntilFinished){
-                TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
-                textview_timeleft.setText(millisUntilFinished / 1000 + "초");
+                timeleft_textView.setText((millisUntilFinished / 1000) + "초");
             }
+
             public void onFinish(){
                 disableButtons();
 
-                TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
-                textview_timeleft.setText("끝!!");
+                timeleft_textView.setText("끝!!");
 
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(GameActivity.this);
-
+                StringBuilder sb = new StringBuilder("당신의 점수는 !!");
+                sb.append(score).append("점 입니다!!! \n");
                 if (score >= 100) {
-                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 난이도를 높여보세요!");
+                    sb.append("난이도를 높여보세요!");
                 } else if (score >= 70) {
-                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 조금만 더 노력해봐요!");
+                    sb.append("조금만 더 노력해봐요!");
                 } else {
-                    builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 차라리 계산기를 두들기는게...");
+                    sb.append("차라리 계산기를 두들기는게...");
                 }
-
-                builder3.setTitle("끝났습니다!")
+                builder3.setMessage(sb.toString())
+                        .setTitle("끝났습니다!")
                         .setCancelable(false)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
@@ -126,13 +141,12 @@ public class GameActivity extends AppCompatActivity {
         timer.cancel();
     }
 
+    /* openScoreActivity: 점수 화면으로 전환합니다. */
     public void openScoreActivity() {
         Intent intent_score = new Intent(this, ScoreActivity.class);
-        intent_score.putExtra("Game_Score",score);
-        /* score에서 이름을 불러올 수 있게 이름값?을 설정해줄게요. 예를 들면 땡땡땡의 점수는 몇점입니다! 이런식으로요 */
-        String User = new String(getIntent().getStringExtra("UserName"));
-        intent_score.putExtra("UserName",User);
-        intent_score.putExtra("level", level);
+        intent_score.putExtra("Game_Score", score)
+                .putExtra("UserName", userName)
+                .putExtra("level", level);
         startActivity(intent_score);
     }
 
@@ -153,6 +167,7 @@ public class GameActivity extends AppCompatActivity {
         ansCards[2] = findViewById(R.id.card_ans3);
         ansCards[3] = findViewById(R.id.card_ans4);
 
+        /* 다음 문제로 전환하는 핸들러 */
         nextProblemHandler = new Handler();
         nextProblemRunnable = new Runnable() {
             @Override
@@ -209,22 +224,26 @@ public class GameActivity extends AppCompatActivity {
         ansCards[currentAnswer].setOnClickListener(correctOnClick);
     }
 
+    /* 모든 버튼이 더 이상 Click되지 않도록 만듭니다. */
     private void disableButtons() {
         int color = getResources().getColor(R.color.colorButtonDisabled);
-        for(View v : ansCards) {
+        for(CardView v : ansCards) {
             v.setOnClickListener(null);
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                 v.setBackground(new ColorDrawable(color));
             } else {
-                ((CardView)v).setCardBackgroundColor(color);
+                v.setCardBackgroundColor(color);
             }
         }
     }
 
+    /* n번째 카드가 정답인지 공개합니다. */
     private void showAnswer(int n) {
+        /* 정답 여부로 색을 찾음 */
         int to = n == currentAnswer ?
                 getResources().getColor(R.color.colorButtonCorrect):
                 getResources().getColor(R.color.colorButtonWrong);
+        /* 색을 변경 */
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             ColorDrawable[] color = {
                     new ColorDrawable(getResources().getColor(R.color.colorButton)), new ColorDrawable(to)};
@@ -236,9 +255,13 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    /* 다음 문제로 전환합니다. */
     private void nextProblem() {
+        /* 문제+답안을 랜덤으로 만듦 */
         Set set = problemSet.generate();
+        /* 문제를 화면에 내보냄 */
         problemMathView.setText("\\[" + set.problem.toTex() + "\\]");
+        /* 답안을 섞음 */
         ArrayList<Integer> arr = new ArrayList<>();
         arr.add(0); arr.add(1); arr.add(2); arr.add(3);
         int[] a = new int[4];
@@ -246,6 +269,7 @@ public class GameActivity extends AppCompatActivity {
             int j = (int)Range.pickFrom(0, arr.size());
             a[i] = arr.remove(j);
         }
+        /* 각 카드에 답안을 설정 */
         int ans = 0;
         while(a[ans] != 0) ans++;
         for(int i = 0; i < 4; i++) {
@@ -258,6 +282,7 @@ public class GameActivity extends AppCompatActivity {
         setAnswer(ans);
     }
 
+    /* 현재 점수를 갱신합니다. */
     private void updateScore(int newScore) {
         score = newScore;
         scoreTextView.setText("" + score);
