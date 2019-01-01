@@ -87,23 +87,21 @@ public class GameActivity extends AppCompatActivity {
         timer = new CountDownTimer(TIME_LIMIT,1000) {
             public void onTick(long millisUntilFinished){
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
-                textview_timeleft.setText(millisUntilFinished/1000 + "초");
+                textview_timeleft.setText(millisUntilFinished / 1000 + "초");
             }
             public void onFinish(){
+                disableButtons();
+
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
                 textview_timeleft.setText("끝!!");
 
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(GameActivity.this);
 
-                if (score > 100) {
+                if (score >= 100) {
                     builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 난이도를 높여보세요!");
-                }
-
-                else if (score > 70) {
+                } else if (score >= 70) {
                     builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 조금만 더 노력해봐요!");
-                }
-
-                else {
+                } else {
                     builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 차라리 계산기를 두들기는게...");
                 }
 
@@ -117,7 +115,6 @@ public class GameActivity extends AppCompatActivity {
                         });
                 AlertDialog alert3 = builder3.create();
                 alert3.show();
-
             }
         };
         timer.start();
@@ -212,6 +209,18 @@ public class GameActivity extends AppCompatActivity {
         ansCards[currentAnswer].setOnClickListener(correctOnClick);
     }
 
+    private void disableButtons() {
+        int color = getResources().getColor(R.color.colorButtonDisabled);
+        for(View v : ansCards) {
+            v.setOnClickListener(null);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                v.setBackground(new ColorDrawable(color));
+            } else {
+                ((CardView)v).setCardBackgroundColor(color);
+            }
+        }
+    }
+
     private void showAnswer(int n) {
         int to = n == currentAnswer ?
                 getResources().getColor(R.color.colorButtonCorrect):
@@ -244,7 +253,6 @@ public class GameActivity extends AppCompatActivity {
             ansCards[i].setCardBackgroundColor(getResources().getColor(R.color.colorButton));
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                 ansCards[i].setBackground(new ColorDrawable(getResources().getColor(R.color.colorButton)));
-
             }
         }
         setAnswer(ans);

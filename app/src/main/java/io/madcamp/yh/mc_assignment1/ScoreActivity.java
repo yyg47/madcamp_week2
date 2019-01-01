@@ -81,7 +81,13 @@ public class ScoreActivity extends AppCompatActivity {
         RankingListAdapter adapter = new RankingListAdapter(ScoreActivity.this,
                 R.layout.item_ranking, manager.get(level), ranking);
         listView.setAdapter(adapter);
-        listView.addHeaderView(adapter.createHeader());
+
+        View header = adapter.createHeader();
+        View view = findViewById(R.id.view_header);
+        ViewGroup group = (ViewGroup)view.getParent();
+        int index = group.indexOfChild(view);
+        group.removeViewAt(index);
+        group.addView(header, index);
     }
 
     private static class RankingListAdapter extends BaseAdapter {
