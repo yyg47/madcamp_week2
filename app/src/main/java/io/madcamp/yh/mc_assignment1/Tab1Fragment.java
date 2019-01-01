@@ -297,20 +297,15 @@ public class Tab1Fragment extends Fragment {
 
 
     /* --- ListView --- */
-
-
-
-
-
-
     @Override
     public void onActivityResult(int requestCode,int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         switch(requestCode){
             case REQUEST_CODE_ADD:
-                if(resultCode == AddcontactActivity.RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     String contact_name = data.getStringExtra("contact_name");
                     String contact_num = data.getStringExtra("contact_num");
+                    if(contact_name == null || contact_num == null) return;
                     Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
                     Log.d("Test@", "Pair Created 1st=" + contact_name + ", 2nd=" + contact_num);
                     contacts.add(pair);
@@ -318,9 +313,10 @@ public class Tab1Fragment extends Fragment {
                 }
             break;
             case REQUEST_CODE_EDIT:
-                if(resultCode == AddcontactActivity.RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     String contact_name = data.getStringExtra("contact_name");
                     String contact_num = data.getStringExtra("contact_num");
+                    if(contact_name == null || contact_num == null) return;
                     Pair<String, String> pair = new Pair<String, String>(contact_name, contact_num);
                     Log.d("Test@", "Pair Created 1st=" + contact_name + ", 2nd=" + contact_num);
                     contacts.set(data.getIntExtra("contact_position",0),pair);
@@ -328,7 +324,7 @@ public class Tab1Fragment extends Fragment {
                 }
                 break;
             case REQUEST_CODE_JSON:
-                if(resultCode == AddcontactActivity.RESULT_OK) {
+                if(resultCode == Activity.RESULT_OK) {
                     String json = data.getStringExtra("JSON");
                     ArrayList<Pair<String, String>> newList = unpackFromJSON(json);
                     contacts.clear();
