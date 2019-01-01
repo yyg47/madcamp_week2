@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".JsoncontactActivity">
 
@@ -11,14 +12,25 @@
         android:layout_height="wrap_content"
         android:text="JSON으로 내보내기/가져오기"/>
 
-    <EditText
-        android:id="@+id/edit_text"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:textAlignment="textStart"
-        android:gravity="start"
-        android:inputType="textMultiLine" />
+        android:layout_weight="1"
+        android:paddingBottom="20dp"
+        app:errorEnabled="true">
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:gravity="start"
+            android:inputType="textMultiLine"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"

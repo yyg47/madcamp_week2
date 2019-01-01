@@ -4,7 +4,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,23 +22,17 @@ public class AddcontactActivity extends AppCompatActivity {
         final EditText name_editText = findViewById(R.id.name_edittext);
         final EditText number_editText = findViewById(R.id.number_edittext);
 
+
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(name_editText.getText().toString().length() == 0 ||
-                        number_editText.getText().toString().length() == 0) {
-                    /* When some editText was not filled */
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AddcontactActivity.this);
-                    builder.setMessage("두 항목 모두 작성해주세요.");
-                    builder.setCancelable(false)
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                boolean isNameEmpty = name_editText.getText().toString().length() == 0;
+                boolean isNumberEmpty = number_editText.getText().toString().length() == 0;
+                if(isNameEmpty || isNumberEmpty) {
+                    if(isNameEmpty) ((TextInputLayout) findViewById(R.id.text_input_layout_name)).setError("빈칸을 채워주세요!!");
+                    else ((TextInputLayout) findViewById(R.id.text_input_layout_name)).setError("");
+                    if(isNumberEmpty) ((TextInputLayout) findViewById(R.id.text_input_layout_number)).setError("빈칸을 채워주세요!!");
+                    else ((TextInputLayout) findViewById(R.id.text_input_layout_number)).setError("");
                 } else {
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("contact_name",name_editText.getText().toString());
@@ -45,5 +42,38 @@ public class AddcontactActivity extends AppCompatActivity {
                 }
             }
         });
+        name_editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ((TextInputLayout) findViewById(R.id.text_input_layout_name)).setError("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        number_editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ((TextInputLayout) findViewById(R.id.text_input_layout_number)).setError("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 }

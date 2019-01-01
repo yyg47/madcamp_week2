@@ -1,75 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ScoreActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/text_view_ranking"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="48dp"
-            android:layout_marginBottom="2dp"
-            android:gravity="bottom|start"
-            android:text="#1"
-            android:textAlignment="textStart"
-            android:textColor="#bfbfbf"
-            android:textSize="36dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/text_view_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="-10dp"
-                android:layout_marginLeft="20dp"
-                android:text="당신의 점수는"
-                android:textSize="28sp" />
-
-            <TextView
-                android:id="@+id/text_view_score"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:gravity="end"
-                android:text="100점 입니다!!"
-                android:textAlignment="textEnd"
-                android:textSize="44sp" />
-        </LinearLayout>
-    </FrameLayout>
-
-    <Button
-        android:id="@+id/button_back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="처음으로" />
-
-
-    <View
-        android:id="@+id/view_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp" />
-
-    <ListView
-        android:id="@+id/list_view_ranking"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        />
+        android:orientation="vertical">
 
-</LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text_view_ranking"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="48dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="bottom|start"
+                android:text="#1"
+                android:textAlignment="textStart"
+                android:textColor="#bfbfbf"
+                android:textSize="36dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_view_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="-10dp"
+                    android:layout_marginLeft="20dp"
+                    android:text="당신의 점수는"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/text_view_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:gravity="end"
+                    android:text="100점 입니다!!"
+                    android:textAlignment="textEnd"
+                    android:textSize="44sp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="처음으로" />
+
+
+        <View
+            android:id="@+id/view_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp" />
+
+        <ListView
+            android:id="@+id/list_view_ranking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            />
+
+    </LinearLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_ribbon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        app:lottie_rawRes="@raw/ribbon"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="false" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_fireworks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        app:lottie_rawRes="@raw/fireworks"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="false" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_trophy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        app:lottie_rawRes="@raw/trophy"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="false" />
+
+</RelativeLayout>

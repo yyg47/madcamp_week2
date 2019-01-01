@@ -1,6 +1,7 @@
 package io.madcamp.yh.mc_assignment1;
 
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Build;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.ArrayList;
 
@@ -56,6 +60,27 @@ public class ScoreActivity extends AppCompatActivity {
         GameScoreManager manager = new GameScoreManager(this);
         int ranking = manager.guessRanking(level, score);
 
+        if (ranking == 0||ranking == 2|| ranking==1){
+            final LottieAnimationView animationView1 = (LottieAnimationView) findViewById(R.id.animation_view_trophy);
+            final LottieAnimationView animationView2= (LottieAnimationView) findViewById(R.id.animation_view_fireworks);
+            final LottieAnimationView animationView3 = (LottieAnimationView) findViewById(R.id.animation_view_ribbon);
+            animationView1.playAnimation();
+            animationView2.playAnimation();
+            animationView3.playAnimation();
+
+            animationView1.setSpeed(0.4f);
+            animationView1.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Log.d("Test@Anim", "" + animation.getCurrentPlayTime() + " " + animation.getDuration());
+
+                    if(animation.getCurrentPlayTime() > animation.getDuration()) {
+                        ((ViewGroup)animationView1.getParent()).removeView(animationView1);
+                    }
+                }
+            });
+        }
+
         if(rankingOnly) { /* 랭킹으로 들어온 경우에는 점수 메시지 표시 안 함 */
             String levelName = getResources().getStringArray(R.array.level)[level];
             messageTextView.setText(levelName + " 랭킹");
@@ -83,6 +108,8 @@ public class ScoreActivity extends AppCompatActivity {
         int index = group.indexOfChild(listHeader);
         group.removeViewAt(index);
         group.addView(adapter.createHeader(), index);
+
+
     }
 
     private static class RankingListAdapter extends BaseAdapter {
@@ -166,6 +193,8 @@ public class ScoreActivity extends AppCompatActivity {
             }
             return convertView;
         }
+
+
     }
 
 }
