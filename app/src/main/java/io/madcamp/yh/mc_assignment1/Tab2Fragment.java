@@ -92,12 +92,12 @@ public class Tab2Fragment extends Fragment {
     }
 
     public void initializeFloatingActionButton() {
-        final FloatingActionButton[] fab = new FloatingActionButton[4];
-
-        fab[0] = top.findViewById(R.id.fab);
-        fab[1] = top.findViewById(R.id.fab1);
-        fab[2] = top.findViewById(R.id.fab2);
-        fab[3] = top.findViewById(R.id.fab3);
+        final FloatingActionButton[] fab = new FloatingActionButton[] {
+                top.findViewById(R.id.fab),
+                top.findViewById(R.id.fab1),
+                top.findViewById(R.id.fab2),
+                top.findViewById(R.id.fab3),
+        };
 
         isFabOpen = false;
 
@@ -190,7 +190,7 @@ public class Tab2Fragment extends Fragment {
     private String packJSON() {
         try {
             JSONArray arr = new JSONArray();
-            ArrayList<Pair<Uri, String>> list = adapter.dataset;
+            ArrayList<Pair<Uri, String>> list = adapter.dataSet;
             if(list != null) {
                 for (Pair<Uri, String> p : list) {
                     JSONObject item = new JSONObject();
@@ -306,7 +306,7 @@ public class Tab2Fragment extends Fragment {
     }
 
     private void removeItem(int idx) {
-        if(idx < 0 || idx >= adapter.dataset.size()) return;
+        if(idx < 0 || idx >= adapter.dataSet.size()) return;
         Uri uri = adapter.remove(idx);
         File file = new File(uri.getPath());
         if(file.exists() && file.delete()) {
@@ -328,7 +328,7 @@ public class Tab2Fragment extends Fragment {
         alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int l = adapter.dataset.size();
+                int l = adapter.dataSet.size();
                 for(int i = l; --i >= 0;) {
                     removeItem(i);
                 }

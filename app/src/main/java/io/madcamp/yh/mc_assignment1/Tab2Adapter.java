@@ -14,34 +14,38 @@ import java.util.ArrayList;
 
 public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolder> {
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
-        public TextView textView;
+        private ImageView imageView;
+        private TextView textView;
 
-        public ImageViewHolder(View itemView) {
+        ImageViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_view);
             textView = itemView.findViewById(R.id.text_view);
         }
 
-        public void setBitmap(Uri uri) {
+        void setImage(Uri uri) {
             imageView.setImageURI(uri);
+        }
+
+        void setTag(String s) {
+            textView.setText(s);
         }
     }
 
-    public ArrayList<Pair<Uri, String>> dataset;
+    public ArrayList<Pair<Uri, String>> dataSet;
 
-    public Tab2Adapter(ArrayList<Pair<Uri, String>> dataset) {
-        this.dataset = dataset;
+    public Tab2Adapter(ArrayList<Pair<Uri, String>> dataSet) {
+        this.dataSet = dataSet;
     }
 
     public void add(Uri uri, String tag) {
-        dataset.add(new Pair<>(uri, tag));
+        dataSet.add(new Pair<>(uri, tag));
         notifyDataSetChanged();
     }
 
     public Uri remove(int i) {
-        Uri uri = dataset.get(i).first;
-        dataset.remove(i);
+        Uri uri = dataSet.get(i).first;
+        dataSet.remove(i);
         notifyDataSetChanged();
         return uri;
     }
@@ -56,19 +60,18 @@ public class Tab2Adapter extends RecyclerView.Adapter<Tab2Adapter.ImageViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder viewHolder, int i) {
-        final ImageViewHolder vh = viewHolder;
-        Pair<Uri, String> p = dataset.get(i);
-        vh.setBitmap(p.first);
-        vh.textView.setText(p.second);
+        Pair<Uri, String> p = dataSet.get(i);
+        viewHolder.setImage(p.first);
+        viewHolder.setTag(p.second);
     }
 
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return dataSet.size();
     }
 
     public String getOriginalPath(int position) {
-        Uri uri = dataset.get(position).first;
+        Uri uri = dataSet.get(position).first;
         String dir;
         String filename;
         try {

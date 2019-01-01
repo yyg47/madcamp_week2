@@ -18,10 +18,10 @@ public class JsoncontactActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String json = intent.getStringExtra("JSON");
 
-        EditText editText = (EditText)findViewById(R.id.edit_text);
+        EditText editText = findViewById(R.id.edit_text);
         editText.setText(json);
 
-        Button buttonCancel = (Button)findViewById(R.id.button_cancel);
+        Button buttonCancel = findViewById(R.id.button_cancel);
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -29,7 +29,7 @@ public class JsoncontactActivity extends AppCompatActivity {
             }
         });
 
-        Button buttonUpdate = (Button)findViewById(R.id.button_update);
+        Button buttonUpdate = findViewById(R.id.button_update);
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
