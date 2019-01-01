@@ -25,8 +25,11 @@ public class Tab3Fragment extends Fragment {
     private View top;
     private EditText setname_edittext;
 
-    private static final String[] BUTTON_LABELS = {
-            "쉬움", "보통", "어려움", "매우 어려움?"
+    public static final int BUTTON_LABELS[] = {
+            R.string.level_0,
+            R.string.level_1,
+            R.string.level_2,
+            R.string.level_3,
     };
     private Button[] buttons;
 
@@ -65,14 +68,14 @@ public class Tab3Fragment extends Fragment {
             buttons[i].setOnClickListener(new StartButtonOnClickListener(i));
         }
 
-        Button button_ranking = top.findViewById(R.id.button_ranking);
-        button_ranking.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ScoreActivity.class);
-                startActivity(intent);
-            }
-        });
+        Button[] rankingButtons = new Button[BUTTON_LABELS.length];
+        rankingButtons[0] = top.findViewById(R.id.button_ranking_0);
+        rankingButtons[1] = top.findViewById(R.id.button_ranking_1);
+        rankingButtons[2] = top.findViewById(R.id.button_ranking_2);
+        rankingButtons[3] = top.findViewById(R.id.button_ranking_3);
+        for(int i = 0; i < rankingButtons.length; i++) {
+            rankingButtons[i].setOnClickListener(new RankingButtonOnClickListener(i));
+        }
 
         return top;
     }
@@ -83,7 +86,7 @@ public class Tab3Fragment extends Fragment {
 
         GameScoreManager manager = new GameScoreManager(getActivity());
         for(int i = 0; i < buttons.length; i++) {
-            buttons[i].setText(BUTTON_LABELS[i] + " (최고기록: " + manager.getScore(i, 0) + ")");
+            buttons[i].setText(getString(BUTTON_LABELS[i]) + " (최고기록: " + manager.getScore(i, 0) + ")");
         }
         setname_edittext.setText(manager.lastName);
     }
@@ -120,6 +123,22 @@ public class Tab3Fragment extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
+        }
+    }
+
+    public class RankingButtonOnClickListener implements View.OnClickListener {
+        int difficulty;
+
+        public RankingButtonOnClickListener(int difficulty) {
+            this.difficulty = difficulty;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), ScoreActivity.class);
+            intent.putExtra("level", difficulty);
+            intent.putExtra("ranking_only", true);
+            startActivity(intent);
         }
     }
 

@@ -74,6 +74,7 @@ public class GameActivity extends AppCompatActivity {
             case 3: problemSet = new ComplexArithmeticEqSet(0); break;
             default: problemSet = new AddSubProblemSet(0); break;
         }
+        ((TextView)findViewById(R.id.text_view_level)).setText(Tab3Fragment.BUTTON_LABELS[level]);
 
         /* 점수 초기화 */
         scoreTextView = findViewById(R.id.text_view_score);
@@ -86,7 +87,7 @@ public class GameActivity extends AppCompatActivity {
         timer = new CountDownTimer(TIME_LIMIT,1000) {
             public void onTick(long millisUntilFinished){
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
-                textview_timeleft.setText(millisUntilFinished/1000 + "초 남았습니다!!");
+                textview_timeleft.setText(millisUntilFinished/1000 + "초");
             }
             public void onFinish(){
                 TextView textview_timeleft = findViewById(R.id.text_view_timeleft);
@@ -106,7 +107,7 @@ public class GameActivity extends AppCompatActivity {
                     builder3.setMessage("당신의 점수는!!" + score + "점 입니다!!! \n 차라리 계산기를 두들기는게...");
                 }
 
-                builder3.setTitle("짜라란!")
+                builder3.setTitle("끝났습니다!")
                         .setCancelable(false)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override

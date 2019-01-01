@@ -431,7 +431,6 @@ public class Tab2Fragment extends Fragment {
             }
 
             Bitmap resized = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-            bitmap.recycle();
 
             FileOutputStream fos = context.openFileOutput(imageFileName, Context.MODE_PRIVATE);
             resized.compress(Bitmap.CompressFormat.JPEG, 100, fos);

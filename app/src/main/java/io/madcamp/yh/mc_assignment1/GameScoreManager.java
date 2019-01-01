@@ -103,6 +103,16 @@ public class GameScoreManager {
         }
     }
 
+    public ArrayList<ScoreSet> get(int level) {
+        if(list == null || level >= list.size()) return new ArrayList<>();
+        return list.get(level);
+    }
+
+    public int getSize(int level) {
+        if(list == null || level >= list.size()) return 0;
+        return list.get(level).size();
+    }
+
     public String getName(int level, int n) {
         if(list == null || level >= list.size() || n >= list.get(level).size())
             return null;
@@ -116,9 +126,10 @@ public class GameScoreManager {
     }
 
     public int guessRanking(int level, int score) {
-        if(score <= 0) return 10;
+        if(score <= 0) return -1;
         int i = 0;
-        for(; i < 10; i++) {
+        int n = getSize(level);
+        for(; i < n; i++) {
             if(getScore(level, i) < score) break;
         }
         return i;
@@ -126,7 +137,7 @@ public class GameScoreManager {
 
     public void add(int level, String name, int score) {
         int r = guessRanking(level, score);
-        if(r >= 10) return;
+        if(r < 0) return;
         while(level >= list.size())
             list.add(new ArrayList<ScoreSet>());
         list.get(level).add(r, new ScoreSet(name, score));

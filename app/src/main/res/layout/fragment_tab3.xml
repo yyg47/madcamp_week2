@@ -25,34 +25,78 @@
         android:textAlignment="center"
         android:text="이름을 입력한 뒤 난이도를 고르세요" />
 
-    <Button
-        android:id="@+id/button_start_0"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="a"/>
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_start_0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="a"/>
 
-    <Button
-        android:id="@+id/button_start_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="b"/>
+        <Button
+            android:id="@+id/button_ranking_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="순위표" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button_start_2"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="c"/>
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_start_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="a"/>
 
-    <Button
-        android:id="@+id/button_start_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="d"/>
+        <Button
+            android:id="@+id/button_ranking_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="순위표" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button_ranking"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="136dp"
-        android:text="순위표로 바로가기" />
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_start_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="a"/>
+
+        <Button
+            android:id="@+id/button_ranking_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="순위표" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_start_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="a"/>
+
+        <Button
+            android:id="@+id/button_ranking_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="순위표" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

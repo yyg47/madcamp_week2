@@ -3,10 +3,15 @@
 
     <string name="tab1_label">연락처</string>
     <string name="tab2_label">갤러리</string>
-    <string name="tab3_label">자유</string>
+    <string name="tab3_label">암산게임</string>
 
     <string name="edit_text_hint_contact">이름: 전화번호</string>
 
     <string name="button_sync_label">연락처에서 불러오기</string>
     <string name="button_add_label">추가</string>
+
+    <string name="level_0">쉬움</string>
+    <string name="level_1">보통</string>
+    <string name="level_2">어려움</string>
+    <string name="level_3">매우 어려움</string>
 </resources>
