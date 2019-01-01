@@ -56,17 +56,6 @@ public class ScoreActivity extends AppCompatActivity {
         GameScoreManager manager = new GameScoreManager(this);
         int ranking = manager.guessRanking(level, score);
 
-        /* Adapter 설정 */
-        RankingListAdapter adapter = new RankingListAdapter(ScoreActivity.this,
-                R.layout.item_ranking, manager.getLevel(level), ranking);
-        listView.setAdapter(adapter);
-
-        /* List Header 추가 */
-        ViewGroup group = (ViewGroup)listHeader.getParent();
-        int index = group.indexOfChild(listHeader);
-        group.removeViewAt(index);
-        group.addView(adapter.createHeader(), index);
-
         if(rankingOnly) { /* 랭킹으로 들어온 경우에는 점수 메시지 표시 안 함 */
             String levelName = getResources().getStringArray(R.array.level)[level];
             messageTextView.setText(levelName + " 랭킹");
@@ -83,6 +72,17 @@ public class ScoreActivity extends AppCompatActivity {
                 rankingTextView.setText("");
             }
         }
+
+        /* Adapter 설정 */
+        RankingListAdapter adapter = new RankingListAdapter(ScoreActivity.this,
+                R.layout.item_ranking, manager.getLevel(level), ranking);
+        listView.setAdapter(adapter);
+
+        /* List Header 추가 */
+        ViewGroup group = (ViewGroup)listHeader.getParent();
+        int index = group.indexOfChild(listHeader);
+        group.removeViewAt(index);
+        group.addView(adapter.createHeader(), index);
     }
 
     private static class RankingListAdapter extends BaseAdapter {
