@@ -49,4 +49,10 @@
         android:layout_height="wrap_content"
         android:text="d"/>
 
+    <Button
+        android:id="@+id/button_ranking"
+        android:layout_width="match_parent"
+        android:layout_height="136dp"
+        android:text="순위표로 바로가기" />
+
 </LinearLayout>

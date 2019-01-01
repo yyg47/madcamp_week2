@@ -1,5 +1,7 @@
 package io.madcamp.yh.mc_assignment1;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,15 +22,30 @@ public class AddcontactActivity extends AppCompatActivity {
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent resultIntent = new Intent();
                 EditText name_editText = (EditText)findViewById(R.id.name_edittext);
-                resultIntent.putExtra("contact_name",name_editText.getText().toString());
-
                 EditText number_editText = (EditText)findViewById(R.id.number_edittext);
-                resultIntent.putExtra("contact_num", number_editText.getText().toString());
-
                 setResult(AddcontactActivity.RESULT_OK,resultIntent);
-                finish();
+
+                if(name_editText.getText().toString().length() == 0 || number_editText.getText().toString().length() == 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddcontactActivity.this);
+                    builder.setMessage("두 항목 모두 작성해주세요.");
+                    builder.setCancelable(false)
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+                else{
+                    resultIntent.putExtra("contact_name",name_editText.getText().toString());
+                    resultIntent.putExtra("contact_num", number_editText.getText().toString());
+                    finish();
+                }
             }
         });
 
