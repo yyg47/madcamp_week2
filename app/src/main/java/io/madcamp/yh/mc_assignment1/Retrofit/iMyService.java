@@ -26,6 +26,7 @@ public interface iMyService {
     Observable<String> addContacts(@Field("contacts") String j);
 
 
-    @GET("getcontacts")
-    Call<> getContacts(@Query("contacts"));
+    @POST("getcontacts")
+    @FormUrlEncoded
+    Observable<String> getContacts(@Field("contacts") String j);
 }

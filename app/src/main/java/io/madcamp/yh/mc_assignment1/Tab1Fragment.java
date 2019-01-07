@@ -322,40 +322,14 @@ public class Tab1Fragment extends Fragment {
                     case R.id.fab6:
                         AlertDialog.Builder builder4 = new AlertDialog.Builder(getActivity());
 
-                        builder4.setMessage("서버의 모든 연락처를 불러옵니다. 진행하시겠습니까?");
+                        builder4.setMessage("초기화 후 서버의 모든 연락처를 불러옵니다. 진행하시겠습니까?");
                         builder4.setTitle("알림")
                                 .setCancelable(false)
                                 .setPositiveButton("예", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        /* Thread getThread = new Thread() {
-                                            @Override
-                                            public void run() {
-                                                try {
-                                                    //contacts=getContacts(contacts);
-                                                    URL url = new URL("http://socrip4.kaist.ac.kr:9080/getcontacts");
-                                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                                                    connection.setRequestMethod("GET");
-                                                    connection.setDoInput(true);
 
-                                                    InputStream inputStream = connection.getInputStream();
-                                                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                                                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                                                    StringBuilder sb = new StringBuilder();
-                                                    sb.append(bufferedReader.readLine());
-
-                                                    Log.d("hjkhsdajk", sb.toString());
-                                                    Log.d("responsecode", String.valueOf(connection.getResponseCode()));
-
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        };
-                                        getThread.start(); */
-
-                                        contacts = ();
+                                        getContacts(contacts);
                                         dialog.dismiss();
                                     }
                                 })
@@ -380,36 +354,32 @@ public class Tab1Fragment extends Fragment {
 
                             @Override
                             public void accept(String response) throws Exception{
-                                Toast.makeText(getActivity(), ""+response,Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "서버에 모든 연락처가 저장되었습니다",Toast.LENGTH_SHORT).show();
                             }
                         }));
             }
 
-            private getContacts(ArrayList<Pair<String,String>> contacts){
+            private void getContacts(final ArrayList<Pair<String,String>> contacts){
                 contacts.clear();
-                compositeDisposable.add(iMyService.getContacts()
+                String j = packIntoJSON(contacts);
+                compositeDisposable.add(iMyService.getContacts(j)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Consumer<String>(){
 
                             @Override
-                            public accept(String response) throws Exception{
-                                return response;
+                            public void accept(String response) throws Exception{
+                                Toast.makeText(getActivity(), "불러오기 완료",Toast.LENGTH_SHORT).show();
+
+
+
+                                ArrayList<Pair<String, String>> newList = unpackFromJSON(response);
+                                contacts.clear();
+                                contacts.addAll(newList);
+                                updateContacts();
                             }
                         }));
 
-
-                return contacts = unpackFromJSON(response);
-
-                /*compositeDisposable.add(iMyService.getContacts(g)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<String>(){
-                            @Override
-                            public void accept(String response) throws Exception{
-                                Toast.makeText(getActivity(), ""+response,Toast.LENGTH_SHORT).show();
-                            }
-                        })); */
             }
 
 
