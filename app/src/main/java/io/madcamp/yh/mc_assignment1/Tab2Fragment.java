@@ -97,6 +97,8 @@ public class Tab2Fragment extends Fragment {
                 top.findViewById(R.id.fab1),
                 top.findViewById(R.id.fab2),
                 top.findViewById(R.id.fab3),
+                top.findViewById(R.id.fab4),
+                top.findViewById(R.id.fab5),
         };
 
         isFabOpen = false;
@@ -117,6 +119,13 @@ public class Tab2Fragment extends Fragment {
                         break;
                     case R.id.fab3:
                         removeAllItems();
+                        break;
+
+                    case R.id.fab4:
+
+                        break;
+                    case R.id.fab5:
+
                         break;
                 }
             }
@@ -142,7 +151,7 @@ public class Tab2Fragment extends Fragment {
             }
         };
 
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 6; i++) {
             fab[i].setOnClickListener(onClickListener);
         }
     }

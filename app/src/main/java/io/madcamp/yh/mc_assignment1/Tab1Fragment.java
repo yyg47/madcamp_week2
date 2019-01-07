@@ -36,12 +36,23 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import android.database.Cursor;
+import android.widget.Toast;
+
+import io.madcamp.yh.mc_assignment1.Retrofit.RetrofitClient;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
 
 public class Tab1Fragment extends Fragment {
     /* --- Constants --- */
@@ -58,9 +69,17 @@ public class Tab1Fragment extends Fragment {
     private View top;
     public String[] call_or_delete = {"통화","수정","삭제"};
 
-    private ArrayList<Pair<String, String>> contacts;
+    public ArrayList<Pair<String, String>> contacts;
     private ArrayList<ListViewAdapter.Item> shownContacts;
     private ListViewAdapter adapter;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
+    io.madcamp.yh.mc_assignment1.Retrofit.iMyService iMyService;
+
+    @Override
+    public void onStop(){
+        compositeDisposable.clear();
+        super.onStop();
+    }
 
     /* --- Header --- */
     /* TabPagerAdapter에서 Fragment 생성할 때 사용하는 메소드 */
@@ -76,6 +95,10 @@ public class Tab1Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         page = getArguments().getInt(ARG_PAGE);
+
+        //Init Service
+        Retrofit retrofitClient = RetrofitClient.getInstance();
+        iMyService = retrofitClient.create(io.madcamp.yh.mc_assignment1.Retrofit.iMyService.class);
     }
 
     @Override
@@ -159,7 +182,7 @@ public class Tab1Fragment extends Fragment {
     // isFabOpen: contains whether FloatingActionButton is opened(true) or not(false)
     private boolean isFabOpen = false;
     public void initializeFloatingActionButton() {
-        final FloatingActionButton[] fab = new FloatingActionButton[5];
+        final FloatingActionButton[] fab = new FloatingActionButton[7];
 
         /* Find every floating action buttons */
         fab[0] = (FloatingActionButton)top.findViewById(R.id.fab);
@@ -167,6 +190,9 @@ public class Tab1Fragment extends Fragment {
         fab[2] = (FloatingActionButton)top.findViewById(R.id.fab2);
         fab[3] = (FloatingActionButton)top.findViewById(R.id.fab3);
         fab[4] = (FloatingActionButton)top.findViewById(R.id.fab4);
+        fab[5] = (FloatingActionButton)top.findViewById(R.id.fab5);
+        fab[6] = (FloatingActionButton)top.findViewById(R.id.fab6);
+
 
         if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
         } else{
@@ -264,9 +290,128 @@ public class Tab1Fragment extends Fragment {
                                 });
                         AlertDialog alert2 = builder2.create();
                         alert2.show();
+                        break;
 
+
+                        // 서버에 연락처 저장하기 lets use "addcontacts" on click
+                        // 이미 저장된 private ArrayList<Pair<String, String>> contacts 의 정보를 db contactsnodejs에 저장
+                    case R.id.fab5:
+                        AlertDialog.Builder builder3 = new AlertDialog.Builder(getActivity());
+
+                        builder3.setMessage("서버의 연락처를 초기화 후 기기의 모든 연락처를 동기화 합니다. 진행하시겠습니까?");
+                        builder3.setTitle("알림")
+                                .setCancelable(false)
+                                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        addContacts(contacts);
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert3 = builder3.create();
+                        alert3.show();
+                        break;
+
+                        // 서버에서 연락처 불러오기
+                    case R.id.fab6:
+                        AlertDialog.Builder builder4 = new AlertDialog.Builder(getActivity());
+
+                        builder4.setMessage("서버의 모든 연락처를 불러옵니다. 진행하시겠습니까?");
+                        builder4.setTitle("알림")
+                                .setCancelable(false)
+                                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        /* Thread getThread = new Thread() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    //contacts=getContacts(contacts);
+                                                    URL url = new URL("http://socrip4.kaist.ac.kr:9080/getcontacts");
+                                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                                                    connection.setRequestMethod("GET");
+                                                    connection.setDoInput(true);
+
+                                                    InputStream inputStream = connection.getInputStream();
+                                                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                                                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                                                    StringBuilder sb = new StringBuilder();
+                                                    sb.append(bufferedReader.readLine());
+
+                                                    Log.d("hjkhsdajk", sb.toString());
+                                                    Log.d("responsecode", String.valueOf(connection.getResponseCode()));
+
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        };
+                                        getThread.start(); */
+
+                                        contacts = ();
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert4 = builder4.create();
+                        alert4.show();
                 }
             }
+
+            private void addContacts(ArrayList<Pair<String,String>> contacts){
+
+                String j = packIntoJSON(contacts);
+                compositeDisposable.add(iMyService.addContacts(j)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>(){
+
+                            @Override
+                            public void accept(String response) throws Exception{
+                                Toast.makeText(getActivity(), ""+response,Toast.LENGTH_SHORT).show();
+                            }
+                        }));
+            }
+
+            private getContacts(ArrayList<Pair<String,String>> contacts){
+                contacts.clear();
+                compositeDisposable.add(iMyService.getContacts()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>(){
+
+                            @Override
+                            public accept(String response) throws Exception{
+                                return response;
+                            }
+                        }));
+
+
+                return contacts = unpackFromJSON(response);
+
+                /*compositeDisposable.add(iMyService.getContacts(g)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>(){
+                            @Override
+                            public void accept(String response) throws Exception{
+                                Toast.makeText(getActivity(), ""+response,Toast.LENGTH_SHORT).show();
+                            }
+                        })); */
+            }
+
 
             /* Helper method for animation */
             private void anim() {
@@ -290,7 +435,7 @@ public class Tab1Fragment extends Fragment {
             }
         };
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 7; i++) {
             fab[i].setOnClickListener(onClickListener);
         }
     }
