@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class Tab1Fragment extends Fragment {
     private int page;
     private Context context;
     private View top;
-    public String[] call_or_delete = {"통화","수정","삭제"};
+    public String[] call_or_delete = {"서버에 저장","통화","수정","삭제"};
 
     public ArrayList<Pair<String, String>> contacts;
     private ArrayList<ListViewAdapter.Item> shownContacts;
@@ -129,18 +130,25 @@ public class Tab1Fragment extends Fragment {
                 builder.setItems(call_or_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (which == 2){
+                        if (which == 3){
                             contacts.remove(position);
                             updateContacts();
-                        } else if (which == 1){
+                        } else if (which == 2){
                             Intent intent = new Intent(context.getApplicationContext(), EditcontactActivity.class);
                             intent.putExtra("contact_name",contacts.get(position).first);
                             intent.putExtra("contact_number",contacts.get(position).second);
                             intent.putExtra("contact_position",position);
                             startActivityForResult(intent, REQUEST_CODE_EDIT);
-                        } else {
+                        } else if (which == 1){
                             Intent intent = new Intent("android.intent.action.DIAL",Uri.parse("tel:" + contacts.get(position).second));
                             startActivity(intent);
+                        }
+                        else {
+                            String addone_name = contacts.get(position).first;
+                            String addone_number = contacts.get(position).second;
+
+                            addonlyone(addone_name,addone_number);
+
                         }
                     }
                 });
@@ -148,6 +156,25 @@ public class Tab1Fragment extends Fragment {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
+
+            public void addonlyone(String addone_name, String addone_number){
+                String j = "[{" + '"'+"name"+'"' + ":" + '"'+addone_name+'"' + "," + '"'+"phoneNumber"+'"'+":"+ '"'+addone_number+ '"'+"}]";
+
+                compositeDisposable.add(iMyService.addonlyone(j)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>(){
+
+                            @Override
+                            public void accept(String response) throws Exception{
+                                Toast.makeText(getActivity(), "저장 완료",Toast.LENGTH_SHORT).show();
+
+                            }
+                        }));
+            }
+
+
+
         });
 
         EditText editText = (EditText)top.findViewById(R.id.searcheditText);
@@ -330,6 +357,7 @@ public class Tab1Fragment extends Fragment {
                                     public void onClick(DialogInterface dialog, int which) {
 
                                         getContacts(contacts);
+                                        Log.d("test@", "getContacts3");
                                         dialog.dismiss();
                                     }
                                 })
@@ -343,6 +371,7 @@ public class Tab1Fragment extends Fragment {
                         alert4.show();
                 }
             }
+
 
             private void addContacts(ArrayList<Pair<String,String>> contacts){
 
@@ -360,7 +389,9 @@ public class Tab1Fragment extends Fragment {
             }
 
             private void getContacts(final ArrayList<Pair<String,String>> contacts){
+                Log.d("test@", "getContacts");
                 contacts.clear();
+
                 String j = packIntoJSON(contacts);
                 compositeDisposable.add(iMyService.getContacts(j)
                         .subscribeOn(Schedulers.io())
@@ -374,8 +405,10 @@ public class Tab1Fragment extends Fragment {
 
 
                                 ArrayList<Pair<String, String>> newList = unpackFromJSON(response);
+                                Log.d("test@", "getContacts1");
                                 contacts.clear();
                                 contacts.addAll(newList);
+                                Log.d("test@", "getContacts2");
                                 updateContacts();
                             }
                         }));
@@ -452,10 +485,16 @@ public class Tab1Fragment extends Fragment {
 
 
     private void updateContacts() {
+        Log.d("test@", "update");
         writeInternalFile("contacts.json", packIntoJSON(contacts));
+        Log.d("test@", "update1");
+
         refilterContacts(((EditText)top.findViewById(R.id.searcheditText)).getText().toString());
+        Log.d("test@", "update2");
         Collections.sort(shownContacts);
+        Log.d("test@", "update3");
         adapter.notifyDataSetChanged();
+        Log.d("test@", "update4");
     }
 
     private void refilterContacts(String pattern) {

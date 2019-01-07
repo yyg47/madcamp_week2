@@ -4,6 +4,7 @@ import android.util.Pair;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import io.madcamp.yh.mc_assignment1.Tab1Fragment;
@@ -24,6 +25,10 @@ public interface iMyService {
     @FormUrlEncoded
     //Observable<String> addContacts(@Field("contacts") ArrayList<Pair<String,String>> contacts);
     Observable<String> addContacts(@Field("contacts") String j);
+
+    @POST("addonlyone")
+    @FormUrlEncoded
+    Observable<String> addonlyone(@Field("contacts") String j);
 
 
     @POST("getcontacts")
